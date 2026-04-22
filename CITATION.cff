@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use pen-score, please cite it using this metadata."
+authors:
+  - family-names: "Mahaboob Ali"
+    given-names: "Anees Ahmed"
+    email: ahmedaneesm@gmail.com
+    affiliation: "VIT University, Vellore"
+title: "PEN-SCORE: Multi-axis scoring framework for programmable genome editors"
+version: 0.1.3
+date-released: 2026-05-25
+url: "https://github.com/ahmedanees-m/pen-score"
+repository-code: "https://github.com/ahmedanees-m/pen-score"
+license: MIT
+abstract: >
+  pen-score is an 8-axis computational scoring framework for ranking programmable
+  genome editors by therapeutic potential. It produces a weighted composite
+  PenScore from axes measuring DSB safety, off-target specificity, cargo capacity,
+  AAV deliverability, immunogenicity, programmability, therapeutic maturity, and
+  metabolic energy independence. Five pre-registered predictions were evaluated on
+  the public scorecard (29 editors, v0.1.1); 4/4 evaluable predictions PASS.
+  v0.1.3 adds the get_editor_metadata() API (EditorMetadata dataclass with
+  intrinsic_cargo_mechanism and cell_based_evidence fields for PEN-COMPARE v3.2),
+  canonicalises IS622 as ISCro4 (UniProt D2TGM5) with IS622 retained as a
+  deprecated alias (DeprecationWarning), and raises test coverage from 68% to
+  93% (267 tests). Dependency pins updated to mech-class>=0.5.4 and
+  genome-atlas>=0.7.2.
+keywords:
+  - genome editing
+  - CRISPR
+  - gene therapy
+  - programmable nucleases
+  - recombinases
+  - multi-axis scoring
+  - pen-score
+  - PEN-STACK
+references:
+  - type: software
+    authors:
+      - family-names: "Mahaboob Ali"
+        given-names: "Anees Ahmed"
+    title: "MECH-CLASS: Mechanism classifier for genome editors"
+    version: "0.5.4"
+    url: "https://github.com/ahmedanees-m/mech-class"
+  - type: software
+    authors:
+      - family-names: "Mahaboob Ali"
+        given-names: "Anees Ahmed"
+    title: "GENOME-ATLAS: Protein knowledge graph for genome editors"
+    version: "0.7.2"
+    url: "https://github.com/ahmedanees-m/genome-atlas"
