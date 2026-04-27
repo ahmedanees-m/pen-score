@@ -1,0 +1,179 @@
+# Score axis mathematical definitions v1.0.0 - locked specification.
+# All axes produce float in [0, 1]; higher = better for the use case.
+# Each axis script in scripts/1X_compute_*.py implements the formula below verbatim.
+# DO NOT change formulas after pre-registration without incrementing version.
+
+version: "1.0.0"
+locked_date: "2026-05-12"
+
+axes:
+
+  S_DSB:
+    name: "DSB Avoidance"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      base = 1.0 - P(DSB_NUCLEASE)        # from MECH-CLASS Tier A probability
+      if composite_flag (IS110 detected):
+          score = min(1.0, base + 0.1)
+      else:
+          score = base
+    inputs:
+      - mech_class_tier_a_probability
+      - mech_class_composite_flag
+    dependencies: [mech-class>=0.5.2]
+    missing_policy: "Return None; composite PenScore excludes this axis with warning"
+    unit_test: "SpCas9 -> 0.00; IS621 -> 1.00 (IS110 Tier-A gate); Bxb1 -> 0.90-1.00"
+
+  S_Spec:
+    name: "Specificity"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      off_target_sites = BWA-MEM hits with <=3 mismatches on 20-bp protospacer vs GRCh38
+      ratio = off_target_sites / (3.2e9 / 1000)
+      score = sigmoid(-2 * log10(ratio + 1e-10))
+    inputs:
+      - canonical_protospacer (RNA-guided editors)
+      - canonical_att_site_count (site-specific recombinases)
+      - GRCh38 BWA index
+    dependencies: [BWA binary, pysam>=0.22]
+    missing_policy: "For non-RNA-guided editors use att-site count proxy"
+    unit_test: "SpCas9 -> 0.65-0.75; Cas12a -> 0.70-0.85; Cre -> 0.85-0.95"
+
+  S_Cargo:
+    name: "Cargo Capacity"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      log_cargo = log10(cargo_capacity_bp)
+      score = (log_cargo - 0) / (log10(1e6) - 0)   # normalise 1 bp -> 1 Mb
+      score = clip(score, 0.0, 1.0)
+    inputs:
+      - cargo_capacity_bp from editor_universe.yaml (literature-curated)
+    dependencies: []
+    missing_policy: "Set 0.5 with warning if not in universe"
+    unit_test: "PE2 (200 bp) -> 0.38-0.42; SpCas9+HDR (1 kb) -> ~0.50; IS621 (1 Mb) -> 1.0"
+
+  S_Deliv:
+    name: "AAV Deliverability"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      total_aa = protein length in amino acids from UniProt REST API
+      score = 1.0 / (1.0 + exp(0.005 * (total_aa - 900)))
+    inputs:
+      - canonical_accession (UniProt sequence length)
+    dependencies: [UniProt REST API via requests]
+    missing_policy: "Return None if length unavailable"
+    unit_test: "SpCas9 (1368 aa) -> 0.20-0.30; Cas12f (~400 aa) -> 0.95-0.99; IS621 (~300 aa) -> ~1.0"
+
+  S_Immuno:
+    name: "Immunogenicity (inverse epitope load)"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      # Class I: 9-mer sliding windows; netMHCpan-4.1 over HLA-A*02:01/A*01:01/B*07:02/B*44:02
+      n_i = count(9-mer peptides with netMHCpan-4.1 %Rank_EL < 0.5 over HLA-I panel)
+      # Class II: 15-mer sliding windows; netMHCIIpan-4.0 over DRB1*01:01/DRB1*03:01/DRB1*04:01
+      n_ii = count(15-mer peptides with netMHCIIpan-4.0 %Rank < 10 over HLA-II panel)
+      total = n_i + 0.5 * n_ii
+      score = 1.0 - clip(total / max_total_over_universe, 0.0, 1.0)
+    inputs:
+      - full protein sequence from UniProt
+    dependencies: [netMHCpan-4.1 binary, netMHCIIpan-4.0 binary]
+    missing_policy: "Return None (compute offline via script 14)"
+    unit_test: "SpCas9 -> ~0.3-0.5; compact IS621 -> ~0.7-0.9"
+
+  S_Prog:
+    name: "Programmability"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      score = 1.0 if rna_guided == True
+      score = 0.0 if rna_guided == False (att-site requiring)
+    inputs:
+      - rna_guided field from editor_universe.yaml
+      - MECH-CLASS Tier B programmability sub-class (secondary)
+    dependencies: []
+    missing_policy: "Return None if not in universe"
+    unit_test: "SpCas9 -> 1.0; IS621 -> 1.0; Cre -> 0.0; Bxb1 -> 0.0"
+
+  S_Mature:
+    name: "Therapeutic Maturity"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      count = PubMed esearch hit count for (editor_synonyms) AND (clinical OR gene therapy)
+      score = log10(count + 1) / log10(max_count_universe + 1)
+    inputs:
+      - references_used_for_pubmed from editor_universe.yaml
+      - NCBI E-utilities esearch
+    dependencies: [requests (core dep)]
+    missing_policy: "Return None if no search terms defined"
+    unit_test: "SpCas9 -> ~1.0; IS621 -> ~0.1-0.3; PE2 -> ~0.6-0.8"
+
+  S_Energy:
+    name: "Energy Independence"
+    range: [0.0, 1.0]
+    higher_is_better: true
+    formula: |
+      # Sequence-level Walker A/B motif scan on primary UniProt accession.
+      # Walker A (P-loop): G[A-Z]{4}GK[ST]
+      # Walker B (hydrophobic-DE): [LVIMF]{4}DE
+      # If walker_motif_override is set in editor_universe.yaml, use that directly.
+      score = 0.0 if walker_motif_override == True
+              OR (walker_motif_override is None
+                  AND (WALKER_A_found OR WALKER_B_found))
+      score = 1.0 otherwise
+    inputs:
+      - canonical_accession (UniProt FASTA sequence)
+      - walker_motif_override from editor_universe.yaml (for multi-subunit systems)
+    dependencies: [urllib (stdlib)]
+    missing_policy: "Return None for REQUIRES_STEP7 / NO_UNIPROT sentinels without override"
+    unit_test: "IS621 -> 1.0; CAST_VK (override=True) -> 0.0; SpCas9 -> 1.0"
+    limitation: |
+      Walker A/B regex is a sequence proxy; not a structural pocket analysis.
+      Multi-subunit CAST systems (evoCAST, CAST_VK, CAST_IF) require
+      walker_motif_override: true because TnsC ATPase is a separate subunit
+      not captured by the primary Cas12k or TnsB accession.
+
+  d7_supplementary:
+    name: "HOMO-LUMO gap (supplementary)"
+    range: "eV (unbounded; not normalised)"
+    higher_is_better: true
+    formula: |
+      Truncated active-site cluster (~20-30 atoms) extracted from PDB/AlphaFold
+      GFN2-xTB singlepoint calculation on cluster
+      gap = (E_LUMO - E_HOMO) * 27.2114  # Hartree -> eV
+    inputs:
+      - canonical_pdb or AlphaFold structure
+      - M-CSA catalytic residue annotations
+    dependencies: [xtb-python>=22.1 inside pen-stack/biophysics Docker image]
+    missing_policy: "Return None; supplementary only; does not gate any headline claim"
+    pre_registered_ordering: "Transesterases > Nucleases in HOMO-LUMO gap"
+    unit_test: "Validated on 8 PDB structures before the full run"
+
+composite:
+  PenScore:
+    formula: |
+      PenScore = sum(w_i * S_i for i in available_axes) / sum(w_i for i in available_axes)
+      # Missing axes excluded; weights renormalised
+      # exclude_axes parameter (v0.1.2+): explicitly exclude axes from the composite.
+      # Excluded axes weights are redistributed proportionally to remaining available axes.
+      # Use case: exclude_axes=['S_Mature'] for biophysical-only comparison of new editors
+      # that lack clinical literature (e.g. IS622, Perry 2026 orthologs).
+    exclude_axes_api: |
+      scorer.score_editor(accession, exclude_axes=['S_Mature'])  # Python API
+      pen-score score-editor ACCESSION --exclude-axes S_Mature   # CLI
+    default_weights:
+      # human_therapeutic_aav_insertion use case (8 axes; sum = 1.00)
+      # Derived by scaling 7-axis v0.1.0 weights x 0.95 and adding S_Energy = 0.05.
+      S_DSB:    0.24
+      S_Spec:   0.14
+      S_Cargo:  0.19
+      S_Deliv:  0.19
+      S_Immuno: 0.09
+      S_Prog:   0.05
+      S_Mature: 0.05
+      S_Energy: 0.05

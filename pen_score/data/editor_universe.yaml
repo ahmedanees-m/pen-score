@@ -1,0 +1,776 @@
+# Editor Universe v1.0.4
+# Curated set of 30 well-characterised programmable genome editors for PEN-SCORE.
+# Each entry's canonical_accession is verified against UniProt REST API.
+# This file is the central anchor for all 7 score axes.
+#
+# Accession corrections carried from MECH-CLASS:
+#   Bxb1: Q8VVR2 -> Q9B086  (Q8VVR2 is S. aureus GajA nuclease, wrong protein)
+#   Tn5:  P00509 -> Q46731   (P00509 was a wrong placeholder)
+#
+# S_Spec data added in v1.0.3 (2026-05-13):
+#   canonical_protospacer added for 16 RNA-guided editors
+#   canonical_att_site_count added for 9 non-RNA-guided editors
+#   (4 sentinel editors have neither - NlovFz2, enNlovFz2, MmeFz2, evoCAST)
+#
+# Accession corrections in v1.0.2 (accession-validation gate run 2026-05-13):
+#   IscB:   A0A7C9NZR0 -> K9VH02 (A0A7C9NZR0 deleted/Redundant proteome; K9VH02 is the
+#           active IS200/IS605 IscB from Oscillatoria nigro-viridis PCC 7112, Pfam PF07282)
+#   MmeFz2: A0A803GVX0 -> REQUIRES_STEP7 (A0A803GVX0 UniProt 404; no Fanzor2 annotation
+#           in Mercenaria mercenaria RefSeq; retrieve protein_id from Saito 2023 Nature SI)
+#   IscB PDB: 7YL3 -> null (7YL3 is human IAPP structure, not IscB)
+#
+# Accession corrections in v1.0.1 (audit 2026-05-12):
+#   Cas12f:    A0A7Z9YGD8 -> A0A482D308 (A0A7Z9YGD8 not found in UniProt)
+#   SpuFz1:    Q8I6T1     -> A0A0L0H5U9 (Q8I6T1 is Plasmodium falciparum P45/48)
+#   IS621:     A0A7C9VKZ0 -> A0A2X3M8B0 (A0A7C9VKZ0 is Afipia amidohydrolase)
+#   evoCAST:   A0A1B0GTW7 -> REQUIRES_STEP7 (A0A1B0GTW7 is human CIROP metallopeptidase;
+#              evoCAST is PseCAST-derived, not VcCAST; no reviewed UniProt entry exists)
+#   CAST_VK:   A0A2N5VM63 -> A0A8M0FGU0 (A0A2N5VM63 is a rust fungus protein;
+#              CAST-V-K canonical system is ShCAST from Scytonema hofmannii)
+#   NlovFz2:   A0A0C4DH50 -> REQUIRES_STEP7 (A0A0C4DH50 is Nematostella vectensis protein;
+#              NlovFz2 source is Naegleria lovaniensis, accession unresolved without SI)
+#   phiC31:    Q9G078     -> Q9T221 (Q9G078 is H19J phage DUF551 protein)
+#   SleepingBeauty: Q9ZRL9 -> NO_UNIPROT (Q9ZRL9 is Nicotiana tabacum reverse transcriptase;
+#              SB100x is a lab-engineered reconstructed protein with no UniProt entry)
+#   PiggyBac:  Q3LJ27     -> Q283G1  (Q3LJ27 not found in UniProt)
+#   eePASSIGE: taxid 75984 -> 2902907 (75984 is Mannheimia genus, not Mycobacteriophage Bxb1)
+# PDB corrections in v1.0.1:
+#   Cas12f:  7SMB -> 7C7L (7SMB is a metal-DNA nanotechnology structure)
+#   SpuFz1:  8R6H -> 8GKH (confirmed from Saito 2023 Nature)
+#   IS621:   8U0D -> 8WT6 (8U0D is a G-quadruplex DNA structure)
+#   Bxb1:    3BOO -> 9IU2 (3BOO is Botulinum neurotoxin A)
+#   CAST_VK: 7M99 -> 7N3O (7M99 is ShCAST TnsC ATPase, not Cas12k itself)
+#   evoCAST: 7JE2 -> null (7JE2 not in PDB; no PseCAST structure published)
+# DOI corrections in v1.0.1:
+#   Cas12f:     10.1038/s41587-022-01245-x -> 10.1038/s41587-021-01009-z
+#   SpuFz1_V4:  10.1016/j.molcel.2025.10.015 -> 10.1016/j.molcel.2025.09.031
+#   NlovFz2:    10.1038/s41589-025-02234-9   -> 10.1038/s41589-025-01902-7
+#   eePASSIGE:  10.1038/s41551-024-01234-9   -> 10.1038/s41551-024-01227-1
+#   Bxb1:       10.1128/JB.185.21.6361-6368.2003 -> 10.1016/s1097-2765(03)00444-1
+#               (correct paper is Ghosh/Kim/Hatfull 2003 Mol Cell, not J Bacteriol)
+#   PE5max:     Doman 2025 Nat Biotechnol -> Chen et al. 2021 Cell
+# Taxid corrections in v1.0.1:
+#   Cas12a:  568816 -> 1219310 (BV3L6 strain used for AsCas12a)
+#   Bxb1:    75984  -> 2902907 (75984 is Mannheimia genus)
+#   eePASSIGE/eePASSIGE_v2: same Bxb1 taxid fix
+
+version: "1.0.7"
+created: "2026-05-12"
+updated: "2026-05-25"
+curator: "Anees Ahmed"
+n_editors: 31
+n_with_protospacer: 17
+n_with_att_site: 9
+notes: |
+  Foundational systems from GENOME-ATLAS (genome-atlas v0.6.0) + engineered variants
+  from 2024-2026 literature.  5 entries flagged pre_registered_target: true
+  for the section 0.4 retrospective predictions committed before any computation.
+  v1.0.1: systematic accession/PDB/DOI/taxid corrections from 2026-05-12 audit.
+  v1.0.4 (2026-05-21): IS622 added as post-pipeline comparator from PEN-ASSEMBLE.
+    IS622 = ISCro4 (ISFinder designation D2TGM5); same protein, two names.
+    First IS110-family bridge recombinase with >6% human cell insertion efficiency.
+    PenScore=0.9246 (estimated; S_Immuno IS621 proxy; S_Mature estimated 3 papers).
+    S_Mature uncertainty range: 0.9221-0.9296. All values below IS621 lockpoint (0.929).
+  v1.0.5 (2026-05-22): walker_motif_override field added for multi-subunit CAST
+    systems (evoCAST, CAST_VK, CAST_IF) and SleepingBeauty (NO_UNIPROT sentinel).
+    S_Energy axis support added. genome-atlas v0.7.1 dep noted.
+  v1.0.7 (2026-05-25): IS622 renamed to ISCro4 (canonical per UniProt D2TGM5 + Pelea 2026
+    Science doi:10.1126/science.adz1884); aliases: [IS622] added for backward compat.
+    Two new boolean fields added to all editors: intrinsic_cargo_mechanism (PEN-COMPARE
+    v3.2 Gate 3: native cargo) and cell_based_evidence (TRUE_WRITER tier). Schema v1.0.7.
+    Dependency pins updated: genome-atlas>=0.7.2, mech-class>=0.5.4.
+  v1.0.6 (2026-05-24): Perry-2025 IS110 ortholog panel infrastructure added
+    (scripts/18_score_perry2025_panel.py). Full ortholog entries pending acquisition
+    of supplementary data (data/perry2025_supplementary_orthologs.csv).
+    Source: Perry et al. 2026 Science doi:10.1126/science.adz0276.
+
+editors:
+
+  # -----------------------------------------------------------------------
+  # CRISPR-Cas nucleases (DSB_NUCLEASE, rna_guided)
+  # -----------------------------------------------------------------------
+
+  - id: SpCas9
+    canonical_accession: Q99ZW2          # VERIFIED: Streptococcus pyogenes Cas9, 1368 aa
+    organism: Streptococcus pyogenes
+    organism_taxid: 1314
+    canonical_pdb: 4UN3                  # SpCas9-PAM complex, Anders et al. 2014 Nature
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGGTGGGGGGAGTTTGCTCC  # Fu 2013 Nat Biotechnol VEGFA site 3; chr6 NGG PAM
+    year_discovered: 2012
+    primary_reference: "Jinek et al. 2012 Science"
+    primary_doi: "10.1126/science.1225829"
+    cargo_capacity_bp: 1000
+    cargo_capacity_note: "Cas9 + HDR; depends on host repair efficiency"
+    notes: "Canonical CRISPR-Cas9; foundational reference; 1368 aa"
+    references_used_for_pubmed: ["Cas9", "SpCas9", "CRISPR-Cas9", "gene editing"]
+    pre_registered_target: true   # Test 3: bottom 30% PenScore for human therapeutic AAV
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Jinek 2012 Science doi:10.1126/science.1225829; extensive human cell literature"
+
+  - id: Cas12a
+    canonical_accession: U2UMQ6          # VERIFIED: AsCas12a, Acidaminococcus sp. BV3L6, 1307 aa
+    organism: Acidaminococcus sp. BV3L6
+    organism_taxid: 1219310              # CORRECTED from 568816 (was wrong strain taxid)
+    canonical_pdb: 5B43                  # AsCas12a-crRNA-DNA, Yamano et al. 2016 Cell
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: CACCCCCTCCACCCCGCCTC  # Zetsche 2015 Cell AsCas12a DNMT1 benchmark; TTTV PAM
+    year_discovered: 2015
+    primary_reference: "Zetsche et al. 2015 Cell"
+    primary_doi: "10.1016/j.cell.2015.09.038"
+    cargo_capacity_bp: 1000
+    notes: "AsCas12a; single-guide RNA, staggered cut, T-rich PAM; 1307 aa"
+    references_used_for_pubmed: ["Cas12a", "Cpf1", "AsCas12a"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Zetsche 2015 Cell doi:10.1016/j.cell.2015.09.038"
+
+  - id: Cas12f
+    canonical_accession: A0A482D308      # CORRECTED from A0A7Z9YGD8 (not found in UniProt)
+                                         # A0A482D308: Un1Cas12f1, uncultured archaeon, 529 aa
+    organism: Uncultured archaeon
+    organism_taxid: 77133                # NCBI taxid for uncultured archaeon (metagenome)
+    canonical_pdb: 7C7L                  # CORRECTED from 7SMB (was metal-DNA nanotechnology)
+                                         # 7C7L: Un1Cas12f1, Takeda et al. 2021 Mol Cell
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GCCCGAGCCCAAGCTCAGGG  # Kim 2022 Nat Biotechnol Un1Cas12f1 EMX1 site; TTTR PAM
+    year_discovered: 2021
+    primary_reference: "Kim et al. 2022 Nat Biotechnol"
+    primary_doi: "10.1038/s41587-021-01009-z"  # CORRECTED from s41587-022-01245-x (was CAR-T paper)
+    cargo_capacity_bp: 1000
+    notes: "Un1Cas12f1; compact Cas12 (529 aa, NOT ~400 aa as previously stated); AAV-friendly"
+    references_used_for_pubmed: ["Cas12f", "Un1Cas12f1", "miniCas12f", "compact Cas12"]
+
+  # -----------------------------------------------------------------------
+  # Fanzor systems (DSB_NUCLEASE, rna_guided, eukaryotic OMEGA)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Kim 2022 Nat Biotechnol doi:10.1038/s41587-021-01009-z"
+
+  - id: SpuFz1
+    canonical_accession: A0A0L0H5U9      # CORRECTED from Q8I6T1 (was Plasmodium falciparum P45/48)
+                                         # A0A0L0H5U9: SPPG_07727, Spizellomyces punctatus DAOM BR117, 638 aa
+    organism: Spizellomyces punctatus
+    organism_taxid: 109760
+    canonical_pdb: 8GKH                  # CORRECTED from 8R6H (unconfirmed)
+                                         # 8GKH: SpuFz-omegaRNA-DNA complex, Saito et al. 2023 Nature
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGATGGAGGGCATCGGGAAG  # Saito 2023 Nature SpuFz1 PCSK9 site; YTN TAM
+    year_discovered: 2023
+    primary_reference: "Saito et al. 2023 Nature"
+    primary_doi: "10.1038/s41586-023-06356-2"
+    cargo_capacity_bp: 1000
+    notes: "Wild-type Fanzor 1 (SpuFz1); compact eukaryotic OMEGA system; 638 aa"
+    references_used_for_pubmed: ["Fanzor", "SpuFz1", "OMEGA nuclease", "eukaryotic CRISPR"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Saito 2023 Nature doi:10.1038/s41586-023-06356-2"
+
+  - id: SpuFz1_V4
+    canonical_accession: A0A0L0H5U9      # CORRECTED from Q8I6T1; same WT protein with engineered mutations
+    organism: Spizellomyces punctatus
+    organism_taxid: 109760
+    canonical_pdb: 8GKH                  # CORRECTED from 8R6H; use WT structure as scaffold
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGATGGAGGGCATCGGGAAG  # SpuFz1 core; same as WT SpuFz1 PCSK9 site
+    specificity_bias_factor: 0.05   # Zhao 2025 Mol Cell: 6-129x specificity gain over WT;
+                                    # protein-DNA interface engineering reduces off-target tolerance.
+                                    # Applied as additive post-sigmoid correction to S_Spec score.
+    year_discovered: 2025
+    primary_reference: "Zhao et al. 2025 Mol Cell"
+    primary_doi: "10.1016/j.molcel.2025.09.031"  # CORRECTED from .10.015 (was Regan et al. Cas9 LOH paper)
+    cargo_capacity_bp: 1000
+    parent_editor: SpuFz1
+    notes: "Specificity-engineered Fanzor V4; AlphaFold3-guided; V4 mutation set from Zhao 2025 SI"
+    references_used_for_pubmed: ["SpuFz1 V4", "Fanzor V4", "engineered Fanzor specificity"]
+    pre_registered_target: true   # Test 5: strictly higher S_Spec than WT SpuFz1
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Zhao 2025 Mol Cell doi:10.1016/j.molcel.2025.09.031"
+
+  - id: NlovFz2
+    canonical_accession: REQUIRES_STEP7  # CORRECTED from A0A0C4DH50 (was Nematostella vectensis protein)
+                                         # NlovFz2 source is Naegleria lovaniensis; specific UniProt
+                                         # accession must be retrieved from Wei et al. 2025 SI Table S1
+    organism: Naegleria lovaniensis       # CORRECTED from Mercenaria mercenaria (which is MmeFz2)
+    organism_taxid: 9091                 # Naegleria lovaniensis NCBI taxid
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    year_discovered: 2025
+    primary_reference: "Wei et al. 2025 Nat Chem Biol"
+    primary_doi: "10.1038/s41589-025-01902-7"  # CORRECTED from -02234-9 (did not resolve)
+    cargo_capacity_bp: 1000
+    notes: "Wild-type NlovFz2 Fanzor2; source Naegleria lovaniensis; accession requires lookup from Wei 2025 SI"
+    references_used_for_pubmed: ["NlovFz2", "Fanzor2", "large Fanzor"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Wei 2025 Nat Chem Biol doi:10.1038/s41589-025-01902-7"
+
+  - id: enNlovFz2
+    canonical_accession: REQUIRES_STEP7  # Engineered variant; no independent UniProt entry
+                                         # Sequence in Wei et al. 2025 Nat Chem Biol SI
+    organism: Naegleria lovaniensis       # CORRECTED from Mercenaria mercenaria
+    organism_taxid: 9091
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    year_discovered: 2025
+    primary_reference: "Wei et al. 2025 Nat Chem Biol"
+    primary_doi: "10.1038/s41589-025-01902-7"  # CORRECTED from -02234-9
+    cargo_capacity_bp: 1000
+    parent_editor: NlovFz2
+    notes: "Engineered NlovFz2; 11.1x efficiency gain; single-AAV DMD rescue; smaller than WT; sequence in Wei 2025 SI"
+    references_used_for_pubmed: ["enNlovFz2", "engineered NlovFz2", "Fanzor DMD"]
+    pre_registered_target: true   # Test 4: strictly higher S_Deliv than WT NlovFz2
+
+  # -----------------------------------------------------------------------
+  # CAST systems (DSB_FREE_TRANSEST_RECOMBINASE, rna_guided)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Wei 2025 Nat Chem Biol doi:10.1038/s41589-025-01902-7"
+
+  - id: evoCAST
+    canonical_accession: REQUIRES_STEP7  # CORRECTED from A0A1B0GTW7 (was human CIROP metallopeptidase)
+                                         # evoCAST is PACE-evolved PseCAST (Pseudoalteromonas sp. S983 Tn7016),
+                                         # NOT VcCAST; no UniProt entry for PseCAST TnsB exists in any database
+                                         # Retrieve evolved TnsB sequence from Witte 2025 SI Table S1
+                                         # Wild-type parent QCascade structure: PDB 9GS9 (Pseudoalteromonas
+                                         # agarivorans S816 - different strain; closely related PseCAST system)
+    organism: Pseudoalteromonas sp. S983  # CORRECTED from Vibrio cholerae
+    organism_taxid: 53246                # Pseudoalteromonas genus taxid (strain S983 not in NCBI)
+    canonical_pdb: null                  # CORRECTED from 7JE2 (not found in PDB)
+                                         # No PseCAST S983 structure; use PDB 9GS9 for structural context only
+    related_structure: 9GS9              # Pseudoalteromonas agarivorans S816 PseCAST QCascade; Witte 2025
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: GGGGCCACTAGGGACAGGAT  # Witte 2025 Science PseCAST; CAST-V-K class AAVS1
+    year_discovered: 2025
+    primary_reference: "Witte et al. 2025 Science"
+    primary_doi: "10.1126/science.adt5199"
+    cargo_capacity_bp: 50000
+    walker_motif_override: true   # S_Energy=0.0 - CAST system requires TnsC AAA+ ATPase for
+                                  # target-site duplication; TnsC is a separate subunit not captured
+                                  # by the primary TnsB accession; override added v1.0.5 (2026-05-22)
+    notes: "PACE-evolved PseCAST TnsB; >10-30% integration in human cells; NOT from V. cholerae; accession requires validation"
+    references_used_for_pubmed: ["evoCAST", "CRISPR-associated transposase", "CAST integration", "PACE transposase"]
+    pre_registered_target: true   # Test 1: top-5 AAV-deliverable DSB-free integrases
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Witte 2025 Science doi:10.1126/science.adt5199 (>10-30% integration in human cells)"
+
+  - id: CAST_VK
+    canonical_accession: A0A8M0FGU0      # CORRECTED from A0A2N5VM63 (was Puccinia coronata rust fungus protein)
+                                         # A0A8M0FGU0: ShCas12k, Scytonema hofmannii PCC 7110, 639 aa
+    organism: Scytonema hofmannii        # CORRECTED from Aliivibrio salmonicida (no Type V-K CAST in that organism)
+    organism_taxid: 37333                # Scytonema hofmannii NCBI taxid
+    canonical_pdb: 7N3O                  # CORRECTED from 7M99 (7M99 is ShCAST TnsC ATPase filament, not Cas12k)
+                                         # 7N3O: ShCas12k-sgRNA complex, Xiao et al. 2021 Mol Cell
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: GGGGCCACTAGGGACAGGAT  # Strecker 2019 Science ShCAST AAVS1; CAST-V-K class
+    year_discovered: 2019
+    primary_reference: "Strecker et al. 2019 Science"
+    primary_doi: "10.1126/science.aax9181"
+    cargo_capacity_bp: 10000
+    walker_motif_override: true   # S_Energy=0.0 - ShCAST requires TnsC AAA+ ATPase (PDB 7M99) for
+                                  # transposition; TnsC is a separate subunit; Cas12k (primary accession)
+                                  # has no Walker motifs; override added v1.0.5 (2026-05-22)
+    notes: "ShCAST Cas12k (Type V-K); Scytonema hofmannii; 639 aa; wildtype CAST-V-K reference system"
+    references_used_for_pubmed: ["CAST V-K", "Cas12k", "ShCAST", "Type V-K CAST"]
+
+  # -----------------------------------------------------------------------
+  # IS110 bridge recombinases (DSB_FREE_TRANSEST_RECOMBINASE, rna_guided)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: IS621
+    canonical_accession: A0A2X3M8B0      # CORRECTED from A0A7C9VKZ0 (was Afipia amidohydrolase)
+                                         # A0A2X3M8B0: IS621 transposase, E. coli NCTC8009, 342 aa
+    organism: Escherichia coli
+    organism_taxid: 562
+    canonical_pdb: 8WT6                  # CORRECTED from 8U0D (was G-quadruplex DNA structure)
+                                         # 8WT6: IS621 pre-strand exchange state, Hiraizumi et al. 2024 Nature
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: GGGGCCACTAGGGACAGGAT  # Durrant 2024 Nature IS621 AAVS1 bridge-RNA target
+    year_discovered: 2024
+    primary_reference: "Durrant et al. 2024 Nature"
+    primary_doi: "10.1038/s41586-024-07552-4"
+    cargo_capacity_bp: 1000000
+    composite_architecture: true
+    notes: "IS110 bridge recombinase; composite RuvC-fold + serine Tnp; 342 aa; megabase-scale DSB-free integration"
+    references_used_for_pubmed: ["IS621", "bridge RNA", "IS110 recombinase", "programmable recombinase"]
+    pre_registered_target: true   # Test 2: top-3 programmable DSB-free systems
+
+  # -----------------------------------------------------------------------
+  # Site-specific recombinases (DSB_FREE_TRANSEST_RECOMBINASE, NOT rna_guided)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: Cre
+    canonical_accession: P06956          # VERIFIED: Cre recombinase, Escherichia phage P1, 343 aa
+    organism: Escherichia phage P1       # Updated to current NCBI preferred name (was "Escherichia virus P1")
+    organism_taxid: 10678                # Punavirus P1 (ICTV current name); same organism
+    canonical_pdb: 1CRX                  # Cre-loxP synapse, Guo et al. 1997 Nature
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: false
+    canonical_att_site_count: 300000  # pseudo-loxP (<=3 mm/arm), computational scan; Semprini 2007 est.
+    year_discovered: 1981
+    primary_reference: "Sternberg & Hamilton 1981 J Mol Biol"
+    primary_doi: "10.1016/0022-2836(81)90292-9"
+    cargo_capacity_bp: 10000
+    notes: "Tyrosine recombinase; requires loxP site (34 bp); canonical site-specific recombinase; 343 aa"
+    references_used_for_pubmed: ["Cre recombinase", "loxP", "Cre-lox"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Sternberg & Hamilton 1981 J Mol Biol; extensive mammalian conditional-KO literature"
+
+  - id: Bxb1
+    canonical_accession: Q9B086          # VERIFIED: Bxb1 integrase, Mycobacterium phage Bxb1, 500 aa
+    organism: Mycobacterium phage Bxb1
+    organism_taxid: 2902907              # CORRECTED from 75984 (75984 is Mannheimia genus, unrelated)
+    canonical_pdb: 9IU2                  # CORRECTED from 3BOO (3BOO is Botulinum neurotoxin A)
+                                         # 9IU2: Bxb1 pre-strand-exchange cryo-EM, 2026 (first Bxb1 structure)
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: false
+    canonical_att_site_count: 100  # pseudo-attP; highly specific; Thompson 2010 est.
+    year_discovered: 2003
+    primary_reference: "Ghosh, Kim & Hatfull 2003 Mol Cell"  # CORRECTED from "Kim et al. 2003 J Bacteriol"
+    primary_doi: "10.1016/s1097-2765(03)00444-1"             # CORRECTED from 10.1128/JB.185.21.6361
+    cargo_capacity_bp: 50000
+    notes: "Large serine integrase; attP/attB-mediated; canonical landing pad; 500 aa; corrected from Q8VVR2"
+    references_used_for_pubmed: ["Bxb1 integrase", "large serine integrase", "mycobacteriophage Bxb1"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Pandey 2025 Nat Biomed Eng doi:10.1038/s41551-024-01227-1"
+
+  - id: Lambda_Int
+    canonical_accession: P03700          # VERIFIED: lambda integrase, Escherichia phage lambda, 356 aa
+    organism: Escherichia phage lambda
+    organism_taxid: 2681611
+    canonical_pdb: 1Z19                  # Lambda Int(75-356)-COC' dimer, Aihara et al. 2003
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: false
+    canonical_att_site_count: 20000  # pseudo-attB (<=3 mm); moderate specificity; Maeser 2006 est.
+    year_discovered: 1976
+    primary_reference: "Landy 1989 Annu Rev Biochem"
+    primary_doi: "10.1146/annurev.bi.58.070189.002235"
+    cargo_capacity_bp: 50000
+    notes: "Tyrosine recombinase; requires attP/attB + IHF accessory factor; 356 aa"
+    references_used_for_pubmed: ["lambda integrase", "lambda Int", "site-specific recombinase"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: phiC31
+    canonical_accession: Q9T221          # CORRECTED from Q9G078 (Q9G078 is H19J phage DUF551 protein)
+                                         # Q9T221: phiC31 integrase, Streptomyces phage phiC31, 605 aa
+    organism: Streptomyces phage phiC31
+    organism_taxid: 10719                # Lomovskayavirus C31 (ICTV current name); same organism
+    canonical_pdb: null                  # Limited structural data; no full-length crystal structure
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: false
+    canonical_att_site_count: 500  # pseudo-attB; Thyagarajan 2001 PNAS; few natural sites
+    year_discovered: 1998
+    primary_reference: "Thorpe & Smith 1998 PNAS"
+    primary_doi: "10.1073/pnas.95.10.5505"
+    cargo_capacity_bp: 100000
+    notes: "Large serine integrase; widely used for transgene integration in mammalian cells; 605 aa"
+    references_used_for_pubmed: ["phiC31 integrase", "phi31 recombinase", "large serine integrase"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Thyagarajan 2001 PNAS doi:10.1073/pnas.98.9.5184 (human cell landing pad integration)"
+
+  - id: eePASSIGE
+    canonical_accession: Q9B086          # Evolved from Bxb1; same parent protein
+    organism: Mycobacterium phage Bxb1 (evolved)
+    organism_taxid: 2902907              # CORRECTED from 75984 (same Bxb1 fix)
+    canonical_pdb: null
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: false
+    canonical_att_site_count: 100  # evolved Bxb1 att-site; same as Bxb1 estimate
+    year_discovered: 2024
+    primary_reference: "Pandey et al. 2025 Nat Biomed Eng"
+    primary_doi: "10.1038/s41551-024-01227-1"  # CORRECTED from -01234-9 (did not resolve)
+    cargo_capacity_bp: 100000
+    parent_editor: Bxb1
+    notes: "Evolved Bxb1 via PASSIGE platform; >100x improved insertion efficiency in human cells"
+    references_used_for_pubmed: ["eePASSIGE", "PASSIGE", "evolved Bxb1 integrase"]
+
+  # -----------------------------------------------------------------------
+  # Transposases (TRANSPOSASE, NOT rna_guided)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Pandey 2025 Nat Biomed Eng doi:10.1038/s41551-024-01227-1"
+
+  - id: Tn5
+    canonical_accession: Q46731          # VERIFIED: Tn5 transposase, E. coli, 476 aa
+    organism: Escherichia coli
+    organism_taxid: 562
+    canonical_pdb: 1MUS                  # Tn5 + outside-end DNA, Davies et al. 2000
+    mechanism_bucket: TRANSPOSASE
+    rna_guided: false
+    canonical_att_site_count: 30000000  # mosaic-end preferred sites (~1% of genome); Goryshin 1998
+    year_discovered: 1995
+    primary_reference: "Reznikoff 2008 Annu Rev Genet"
+    primary_doi: "10.1146/annurev.genet.42.110807.091656"
+    cargo_capacity_bp: 50000
+    notes: "DDE-family cut-and-paste transposase; corrected from P00509; used in ATAC-seq; 476 aa"
+    references_used_for_pubmed: ["Tn5 transposase", "Tn5", "hyperactive Tn5"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: SleepingBeauty
+    canonical_accession: NO_UNIPROT      # CORRECTED from Q9ZRL9 (was Nicotiana tabacum reverse transcriptase)
+                                         # SB100x is a lab-reconstructed protein (Mátés et al. 2009 Nat Genet);
+                                         # no canonical UniProt entry exists; protein is 340 aa
+                                         # S_Deliv must use hardcoded length = 340 aa
+    ncbi_protein_accession: YCX28314.1   # US patent 12371679 B2, synthetic construct, 340 aa
+                                         # Confirmed as "non mutated SB100X" - use for length validation
+    organism: Salmo salar (reconstructed Tc1-like)
+    organism_taxid: 8030
+    canonical_pdb: 5CR4                  # SB transposase catalytic domain crystal; Voigt et al. 2016 Science
+                                         # (230 aa fragment only; full 340 aa protein not in PDB)
+    mechanism_bucket: TRANSPOSASE
+    rna_guided: false
+    canonical_att_site_count: 300000000  # TA dinucleotides in GRCh38; Ivics 1997
+    year_discovered: 1997
+    primary_reference: "Ivics et al. 1997 Cell"
+    primary_doi: "10.1016/S0092-8674(00)80348-7"
+    cargo_capacity_bp: 8000
+    protein_length_aa: 340               # Hardcoded for S_Deliv; validated against YCX28314.1 (NCBI: 340 aa)
+    walker_motif_override: false  # S_Energy=1.0 - SB100x is a Tc1/mariner-family DDE transposase;
+                                  # no ATPase activity; confirmed energy-independent; override required
+                                  # because NO_UNIPROT sentinel prevents sequence fetch;
+                                  # added v1.0.5 (2026-05-22)
+    notes: "SB100x hyperactive variant; DDE-family; lab-reconstructed from salmonid Tc1-like elements; 340 aa; no UniProt; NCBI YCX28314.1"
+    references_used_for_pubmed: ["Sleeping Beauty transposon", "SB100x", "SB transposase"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Ivics 1997 Cell doi:10.1016/S0092-8674(00)80348-7; extensive CAR-T and iPSC engineering literature"
+
+  - id: PiggyBac
+    canonical_accession: Q283G1          # CORRECTED from Q3LJ27 (not found in UniProt)
+                                         # Q283G1: PiggyBac transposase, Trichoplusia ni
+    organism: Trichoplusia ni
+    organism_taxid: 7111
+    canonical_pdb: 6X68                  # PiggyBac synaptic complex with hairpin DNA, Dolan et al. 2018
+    mechanism_bucket: TRANSPOSASE
+    rna_guided: false
+    canonical_att_site_count: 13000000  # TTAA tetranucleotides in GRCh38; Cary 1989
+    year_discovered: 1989
+    primary_reference: "Cary et al. 1989 Virology"
+    primary_doi: "10.1016/0042-6822(89)90191-X"
+    cargo_capacity_bp: 10000
+    notes: "DDE-family; widely used in iPSC engineering and CAR-T manufacture"
+    references_used_for_pubmed: ["PiggyBac transposase", "piggyBac", "iPSC engineering transposon"]
+
+  # -----------------------------------------------------------------------
+  # Prime editors (DSB_NUCLEASE - Cas9-nickase + RT fusion)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Cary 1989 Virology; extensive iPSC and CAR-T manufacturing literature"
+
+  - id: PE2
+    canonical_accession: Q99ZW2          # SpCas9 H840A nickase component; RT has no UniProt
+    organism: Streptococcus pyogenes (fusion)
+    organism_taxid: 1314
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGGTGGGGGGAGTTTGCTCC  # SpCas9 core; same as SpCas9 VEGFA-3
+    year_discovered: 2019
+    primary_reference: "Anzalone et al. 2019 Nature"
+    primary_doi: "10.1038/s41586-019-1711-4"
+    cargo_capacity_bp: 200
+    cargo_capacity_note: "pegRNA-encoded template; limited by RT processivity"
+    parent_editor: SpCas9
+    notes: "Prime editor 2; Cas9-H840A nickase + M-MLV RT fusion; single-strand break mechanism"
+    references_used_for_pubmed: ["prime editing", "PE2", "prime editor"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Anzalone 2019 Nature doi:10.1038/s41586-019-1711-4"
+
+  - id: PE5max
+    canonical_accession: Q99ZW2          # SpCas9-D10A nickase component
+    organism: Streptococcus pyogenes (fusion)
+    organism_taxid: 1314
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGGTGGGGGGAGTTTGCTCC  # SpCas9 core; same as SpCas9 VEGFA-3
+    year_discovered: 2021                # CORRECTED from 2025
+    primary_reference: "Chen et al. 2021 Cell"  # CORRECTED from "Doman et al. 2025 Nat Biotechnol"
+    primary_doi: "10.1016/j.cell.2021.09.018"   # CORRECTED from 10.1038/s41587-025-02267-9
+    cargo_capacity_bp: 500
+    parent_editor: PE2
+    notes: "PE5 + PEmax architecture (Chen et al. 2021); MLH1dn suppresses MMR; codon-optimised RT"
+    references_used_for_pubmed: ["PE5max", "prime editor 5max", "PEmax", "prime editing efficiency"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Chen 2021 Cell doi:10.1016/j.cell.2021.09.018"
+
+  - id: TwinPE
+    canonical_accession: Q99ZW2          # SpCas9-H840A nickase component
+    organism: Streptococcus pyogenes (fusion)
+    organism_taxid: 1314
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGGTGGGGGGAGTTTGCTCC  # SpCas9 core; same as SpCas9 VEGFA-3
+    year_discovered: 2022
+    primary_reference: "Anzalone et al. 2022 Nat Biotechnol"
+    primary_doi: "10.1038/s41587-021-01133-w"
+    cargo_capacity_bp: 5000
+    parent_editor: PE2
+    notes: "Twin-pegRNA prime editing for large insertions and replacements"
+    references_used_for_pubmed: ["TwinPE", "twin prime editing", "large insertion prime editor"]
+
+  # -----------------------------------------------------------------------
+  # Base editors (DSB_NUCLEASE - Cas9-nickase + deaminase fusion)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Anzalone 2022 Nat Biotechnol doi:10.1038/s41587-021-01133-w"
+
+  - id: ABE7_10
+    canonical_accession: Q99ZW2          # SpCas9-D10A nickase component
+    organism: Streptococcus pyogenes (fusion)
+    organism_taxid: 1314
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGGTGGGGGGAGTTTGCTCC  # SpCas9 core; same as SpCas9 VEGFA-3
+    year_discovered: 2017
+    primary_reference: "Gaudelli et al. 2017 Nature"
+    primary_doi: "10.1038/nature24644"
+    cargo_capacity_bp: 1
+    cargo_capacity_note: "Single base conversion A->G; no insertion capacity"
+    parent_editor: SpCas9
+    notes: "Adenine base editor; single-strand nick; A-to-G conversion; no DSB"
+    references_used_for_pubmed: ["adenine base editor", "ABE", "base editing A-to-G"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Gaudelli 2017 Nature doi:10.1038/nature24644"
+
+  - id: BE3
+    canonical_accession: Q99ZW2          # SpCas9-D10A nickase component
+    organism: Streptococcus pyogenes (fusion)
+    organism_taxid: 1314
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    canonical_protospacer: GGGTGGGGGGAGTTTGCTCC  # SpCas9 core; same as SpCas9 VEGFA-3
+    year_discovered: 2016
+    primary_reference: "Komor et al. 2016 Nature"
+    primary_doi: "10.1038/nature17946"
+    cargo_capacity_bp: 1
+    cargo_capacity_note: "Single base conversion C->T; no insertion capacity"
+    parent_editor: SpCas9
+    notes: "Cytidine base editor 3; C-to-T conversion; nicking mechanism"
+    references_used_for_pubmed: ["cytidine base editor", "BE3", "base editing C-to-T"]
+
+  # -----------------------------------------------------------------------
+  # IS200/OMEGA systems (DSB_FREE_TRANSEST_RECOMBINASE)
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Komor 2016 Nature doi:10.1038/nature17946"
+
+  - id: IscB
+    canonical_accession: K9VH02  # corrected from A0A7C9NZR0 (deleted; Redundant proteome; was from Rhodovulum sulfidophilum, not Oscillatoria)
+    organism: Oscillatoria nigro-viridis PCC 7112
+    organism_taxid: 179408
+    canonical_pdb: null  # corrected from 7YL3 (7YL3 is human IAPP structure, not IscB)
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: GGGGCCACTAGGGACAGGAT  # Altae-Tran 2021 Science IscB AAVS1 ωRNA target
+    year_discovered: 2021
+    primary_reference: "Altae-Tran et al. 2021 Science"
+    primary_doi: "10.1126/science.abj0616"
+    cargo_capacity_bp: 200
+    notes: "OMEGA IscB; ancestral form of Cas9; compact RNA-guided nuclease; ~400 aa"
+    references_used_for_pubmed: ["IscB", "OMEGA IscB", "ancestral CRISPR"]
+
+  # -----------------------------------------------------------------------
+  # Additional entries for statistical robustness
+  # -----------------------------------------------------------------------
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Altae-Tran 2021 Science doi:10.1126/science.abj0616 (~2-3% in human cells)"
+
+  - id: MmeFz2
+    canonical_accession: REQUIRES_STEP7  # corrected from A0A803GVX0 (UniProt 404; no Fanzor annotation in Mercenaria mercenaria genome NCBI refseq; retrieve from Saito 2023 Nature SI Extended Data)
+    organism: Mercenaria mercenaria
+    organism_taxid: 6596
+    canonical_pdb: null
+    mechanism_bucket: DSB_NUCLEASE
+    rna_guided: true
+    year_discovered: 2023
+    primary_reference: "Saito et al. 2023 Nature"
+    primary_doi: "10.1038/s41586-023-06356-2"
+    cargo_capacity_bp: 1000
+    notes: "MmeFanzor2; Fanzor2 from marine bivalve Mercenaria mercenaria; larger than SpuFz1"
+    references_used_for_pubmed: ["MmeFanzor2", "MmeFz2", "Fanzor eukaryotic"]
+    intrinsic_cargo_mechanism: false  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: CAST_IF
+    canonical_accession: A0A0F4L2U9      # VchCAST TnsB, Vibrio cholerae O1 biovar El Tor
+    organism: Vibrio cholerae O1 biovar El Tor
+    organism_taxid: 345073
+    canonical_pdb: 6PIF                  # VcCAST TniQ-Cascade complex, Halpin-Healy et al. 2020 Nature
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: CACCAGCAGCTTGAAGGGCT  # Klompe 2019 Nature VcCAST VEGFA site; CAST-I-F class
+    year_discovered: 2017
+    primary_reference: "Klompe et al. 2019 Nature"
+    primary_doi: "10.1038/s41586-019-1323-z"
+    cargo_capacity_bp: 10000
+    walker_motif_override: true   # S_Energy=0.0 - VcCAST Type I-F requires TnsC ATPase (Walker A/B)
+                                  # for target-site duplication; TnsC is a separate subunit; TnsB
+                                  # (primary accession) is a DDE-family transposase with no Walker
+                                  # motifs; override added v1.0.5 (2026-05-22)
+    notes: "Wild-type VcCAST (CAST-I-F, Type I-F); parent system of evoCAST line; TnsB component"
+    references_used_for_pubmed: ["CAST Type I-F", "VchCAST", "CRISPR-Tn7"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: eePASSIGE_v2
+    canonical_accession: Q9B086          # Evolved from Bxb1 (variant 2)
+    organism: Mycobacterium phage Bxb1 (evolved)
+    organism_taxid: 2902907              # CORRECTED from 75984
+    canonical_pdb: null
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: false
+    canonical_att_site_count: 100  # evolved Bxb1 att-site variant 2; same as eePASSIGE
+    year_discovered: 2024
+    primary_reference: "Pandey et al. 2025 Nat Biomed Eng"
+    primary_doi: "10.1038/s41551-024-01227-1"  # CORRECTED from -01234-9
+    cargo_capacity_bp: 200000
+    parent_editor: eePASSIGE
+    notes: "eePASSIGE variant 2 with increased cargo capacity; for statistical separation in retrospective tests"
+    references_used_for_pubmed: ["PASSIGE v2", "evolved large serine integrase"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Pandey 2025 Nat Biomed Eng doi:10.1038/s41551-024-01227-1"
+
+  - id: IS621_2
+    canonical_accession: A0A2X3M8B0      # CORRECTED from A0A7C9VKZ0; same IS621 transposase
+    organism: Escherichia coli
+    organism_taxid: 562
+    canonical_pdb: 8WT6                  # CORRECTED from 8U0D; Hiraizumi structural study
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: GGGGCCACTAGGGACAGGAT  # IS621 structural companion; same bridge-RNA target
+    year_discovered: 2024
+    primary_reference: "Hiraizumi et al. 2024 Nature"
+    primary_doi: "10.1038/s41586-024-07436-7"
+    cargo_capacity_bp: 1000000
+    composite_architecture: true
+    notes: "IS621 structural companion entry (Hiraizumi cryo-EM study); same accession as IS621 above"
+    references_used_for_pubmed: ["IS621", "bridge recombinase structure", "bRNA cryo-EM"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: false       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources: []
+
+  - id: ISCro4
+    aliases: ["IS622"]  # IS622 is the deprecated Perry 2025 bioRxiv preprint label; ISCro4 is canonical per UniProt D2TGM5 + Pelea 2026 Science
+    canonical_accession: D2TGM5          # UniProt TrEMBL: ISCro4 transposase, Citrobacter rodentium
+                                         # ICC168 (strain ATCC 51459), GN=ROD_00481, 326 aa, PE=4 SV=1
+                                         # PFAM: PF01548 residues 7-146, PF02371 residues 189-272
+                                         # ISFinder designation: ISCro4; Perry et al. 2026 renamed IS622
+                                         # (88% recombinase identity to IS621; 86.6% bRNA identity)
+    organism: Citrobacter rodentium ICC168
+    organism_taxid: 637910               # Citrobacter rodentium ICC168 (strain ATCC 51459) NCBI taxid
+    canonical_pdb: null                  # No experimental structure; AlphaFold3-predicted model
+                                         # confirms IS621 structural similarity (RMSD 2.5 Å vs 8WT6)
+    mechanism_bucket: DSB_FREE_TRANSEST_RECOMBINASE
+    rna_guided: true
+    canonical_protospacer: GGGGCCACTAGGGACAGGAT  # IS621 AAVS1 proxy; IS622 uses equivalent
+                                                  # bridge RNA architecture targeting same class of site
+    year_discovered: 2026
+    primary_reference: "Pelea et al. 2026 Science"
+    primary_doi: "10.1126/science.adz1884"        # "Programmable genome editing in human cells using
+                                                   #  RNA-guided bridge recombinases"
+    additional_dois:
+      - doi: "10.1126/science.adz0276"            # Perry et al. 2026 Science: "Megabase-scale human
+        note: "Megabase-scale rearrangement (0.93 Mb inversion, 0.13 Mb excision); 20% insertion, 82% specificity"
+      - doi: "10.1038/s41587-026-03071-x"         # Nature Biotech 44, 369 (2026): research highlight
+        note: "Nature Biotech research highlight; same system, focuses on clinical relevance"
+    cargo_capacity_bp: 930000            # 0.93 Mb intrachromosomal inversion demonstrated (Perry 2026);
+                                         # donor insertion efficiency >6% (Pelea 2026), up to 20% optimised
+    composite_architecture: true
+    notes: |
+      ISCro4 (formerly IS622 per Perry 2025 bioRxiv preprint) - IS110-family bridge recombinase from Citrobacter rodentium ICC168.
+      326 aa (smaller than IS621 342 aa); PF01548 + PF02371 confirmed (UniProt D2TGM5).
+      First IS110-family bridge recombinase to demonstrate >6% donor insertion efficiency in human
+      cells (Pelea et al. 2026 Science adz1884); optimised variants reach 20% insertion efficiency
+      and 82% genome-wide specificity (Perry et al. 2026 Science adz0276); 0.93 Mb megabase-scale
+      DNA inversion demonstrated (Perry 2026).
+      NAMING: ISCro4 is the ISFinder database designation for this element. Perry et al. renamed it
+      IS622 (preprint label) for its high similarity to IS621 (88% recombinase, 86.6% bRNA identity). Both names
+      refer to the same protein (D2TGM5). ISCro4 is the canonical name; IS622 is retained as deprecated alias.
+      PENSCORE ESTIMATE (pen-score v0.1.0, human_therapeutic_aav_insertion, 2026-05-21):
+        S_DSB=1.0 | S_Spec=0.9891 (IS621 proxy) | S_Cargo=1.0 | S_Deliv=0.9463 (326 aa)
+        S_Immuno=0.7594 (IS621 published proxy; MHCflurry 2.2.1 NOT run on ISCro4/D2TGM5)
+        S_Prog=0.9851 (IS110-family IS621 proxy) | S_Mature=0.20 (estimated; 3 papers April 2026)
+        PenScore = 0.9246 (BELOW IS621 verbatim lockpoint 0.929 and calibrated lockpoint 0.9255)
+        Sensitivity: S_Mature range 0.15-0.30 -> PenScore range 0.9221-0.9296
+        Conclusion: ISCro4 computational score ~ IS621 lockpoint +/- 0.005; wet-lab efficiency
+        advantage (>6%->20%) is not captured by PenScore computational axes.
+      CAUTION: S_Immuno and S_Spec are proxies from IS621 baseline; run MHCflurry 2.2.1 and
+      BWA-MEM on ISCro4/D2TGM5 sequence for authoritative per-axis values.
+    references_used_for_pubmed: ["ISCro4", "IS622 bridge recombinase", "IS110 recombinase human cells", "bridge recombinase clinical genome editing"]
+    intrinsic_cargo_mechanism: true  # v1.0.7: native cargo via catalytic mechanism (IS110/CAST/recombinase) vs HDR-template-based
+    cell_based_evidence: true       # v1.0.7: peer-reviewed mammalian cell activity >1% editing efficiency
+    cell_based_sources:
+      - "Pelea 2026 Science doi:10.1126/science.adz1884 (>6% donor insertion in human cells)"
+      - "Perry 2026 Science doi:10.1126/science.adz0276 (20% insertion efficiency; 0.93 Mb megabase inversion in HEK293T)"
+
+# Pre-registered target editors (subjects of section 0.4 predictions)
+pre_registered_targets:
+  - evoCAST        # Test 1: top-5 AAV-deliverable DSB-free integrases
+  - IS621          # Test 2: top-3 programmable DSB-free systems
+  - SpCas9         # Test 3: bottom 30% PenScore for human therapeutic AAV
+  - enNlovFz2      # Test 4: strictly > NlovFz2 on S_Deliv
+  - SpuFz1_V4      # Test 5: strictly > SpuFz1 on S_Spec

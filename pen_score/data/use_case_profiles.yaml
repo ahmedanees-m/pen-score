@@ -1,0 +1,106 @@
+# Use-case axis weight profiles for PenScore composite function.
+# All weights in each profile sum to 1.0 (8 axes as of v0.1.1).
+# S_Energy added in v0.1.1: all existing (v0.1.0) weights scaled by 0.95;
+# S_Energy = 0.05 across all profiles (energy independence is a universal
+# desirable property that does not strongly depend on use case).
+# Higher weight = that axis matters more for the selected use case.
+
+profiles:
+
+  human_therapeutic_aav_insertion:
+    # Most common wet-lab decision: deliver a large insert into human cells via AAV.
+    # DSB avoidance and cargo capacity are the critical axes.
+    # v0.1.0 weights x 0.95, rounded; S_Energy = 0.05. Sum = 1.00.
+    S_DSB:    0.24
+    S_Spec:   0.14
+    S_Cargo:  0.19
+    S_Deliv:  0.19
+    S_Immuno: 0.09
+    S_Prog:   0.05
+    S_Mature: 0.05
+    S_Energy: 0.05
+
+  human_therapeutic_electroporation:
+    # Electroporation allows larger cargo; relaxes AAV deliverability constraint.
+    # Specificity matters more (off-target edits at high plasmid dose).
+    # v0.1.0 weights x 0.95, rounded; S_Energy = 0.05. Sum = 1.00.
+    S_DSB:    0.24
+    S_Spec:   0.24
+    S_Cargo:  0.19
+    S_Deliv:  0.05
+    S_Immuno: 0.09
+    S_Prog:   0.04
+    S_Mature: 0.10
+    S_Energy: 0.05
+
+  large_cargo_integration:
+    # Priority: maximise integration capacity regardless of delivery mode.
+    # E.g. CAR-T construct integration, metabolic pathway insertion.
+    # v0.1.0 weights x 0.95, rounded; S_Energy = 0.05. Sum = 1.00.
+    S_DSB:    0.19
+    S_Spec:   0.09
+    S_Cargo:  0.38
+    S_Deliv:  0.10
+    S_Immuno: 0.05
+    S_Prog:   0.09
+    S_Mature: 0.05
+    S_Energy: 0.05
+
+  base_editing_small_correction:
+    # Small point-mutation correction; cargo capacity irrelevant;
+    # specificity is paramount.
+    # v0.1.0 weights x 0.95, rounded; S_Energy = 0.05. Sum = 1.00.
+    S_DSB:    0.14
+    S_Spec:   0.38
+    S_Cargo:  0.05
+    S_Deliv:  0.14
+    S_Immuno: 0.14
+    S_Prog:   0.05
+    S_Mature: 0.05
+    S_Energy: 0.05
+
+  research_discovery:
+    # Academic lab exploring new editor classes; maturity less important.
+    # v0.1.0 weights x 0.95, rounded; S_Energy = 0.05. Sum = 1.00.
+    S_DSB:    0.14
+    S_Spec:   0.14
+    S_Cargo:  0.14
+    S_Deliv:  0.10
+    S_Immuno: 0.04
+    S_Prog:   0.29
+    S_Mature: 0.10
+    S_Energy: 0.05
+
+  megabase_rearrangement:
+    # Large-scale genomic rearrangements (>100 kb inversions, deletions,
+    # translocations). Requires high programmability for precise boundary
+    # definition and high cargo capacity. Clinical maturity is secondary -
+    # field is early-stage for this application.
+    # Reference editor: ISCro4 (canonical; formerly IS622 preprint label) - 0.93 Mb inversion in HEK293, Perry 2026 Science
+    # doi:10.1126/science.adz0276). Added v0.1.2 (2026-05-24). Sum = 1.00.
+    S_DSB:    0.20   # must be DSB-free; genome instability risk scales with size
+    S_Spec:   0.10   # specificity important but context differs from point edits
+    S_Cargo:  0.25   # cargo/flanking sequence capacity
+    S_Deliv:  0.02   # delivery is a challenge but separate engineering problem
+    S_Immuno: 0.03   # immunogenicity less studied at this scale
+    S_Prog:   0.30   # programmable boundary selection is paramount
+    S_Mature: 0.00   # explicitly zero - all megabase editors are immature
+    S_Energy: 0.10   # energy independence preferred; large-scale editing is resource-intensive
+
+  therapeutic_excision_bcl11a:
+    # Excision of the BCL11A erythroid enhancer (+58 element) for sickle cell /
+    # beta-thalassemia gene therapy. Requires high clinical maturity data, low
+    # immunogenicity, and high specificity for the +58 enhancer. DSB-free required
+    # (existing CRISPR approaches have off-target risk at this locus).
+    # Reference editor: IS621 (highest PenScore DSB-free with programmability).
+    # Target locus: BCL11A enhancer +58 element, chr2:60,495,250-60,495,319 (hg38).
+    # Sources: Frangoul 2021 NEJM doi:10.1056/NEJMoa2031054 (CRISPR reference);
+    #          Wei 2022 Nat Biotechnol (enhancer mapping). Added v0.1.2. Sum = 1.00.
+    S_DSB:    0.25   # DSB-free non-negotiable for clinical application
+    S_Spec:   0.25   # high specificity for +58 enhancer sequence
+    S_Cargo:  0.05   # small excision target, cargo capacity less critical
+    S_Deliv:  0.04   # ex vivo delivery (lentivirus/electroporation) reduces weight
+    S_Immuno: 0.20   # low immunogenicity critical for ex vivo HSC therapy
+    S_Prog:   0.05   # minimal - target site is fixed
+    S_Mature: 0.15   # clinical maturity data preferred
+    S_Energy: 0.01   # energy independence nice-to-have; delivery scaffold carries cost

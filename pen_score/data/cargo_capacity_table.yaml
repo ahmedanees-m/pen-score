@@ -1,0 +1,138 @@
+# Literature-curated cargo capacity values for the editor universe.
+# Source: primary publications + systematic review of reported integration sizes.
+# Values in base pairs (bp).
+# Used by S_Cargo axis (script 12_compute_S_Cargo.py).
+#
+# Rule: use the *reported* maximum documented cargo size, not theoretical limit.
+# For recombinases, use experimentally demonstrated values.
+
+cargo_table:
+  - editor_id: SpCas9
+    cargo_capacity_bp: 1000
+    source: "HDR-mediated insertion; practical limit ~1 kb with high efficiency"
+    primary_doi: "10.1126/science.1225829"
+
+  - editor_id: Cas12a
+    cargo_capacity_bp: 1000
+    source: "HDR-mediated; similar to SpCas9"
+    primary_doi: "10.1016/j.cell.2015.09.038"
+
+  - editor_id: Cas12f
+    cargo_capacity_bp: 1000
+    source: "HDR-mediated; compact nuclease"
+    primary_doi: "10.1038/s41587-022-01245-x"
+
+  - editor_id: SpuFz1
+    cargo_capacity_bp: 1000
+    source: "Saito 2023; NHEJ/HDR-mediated"
+    primary_doi: "10.1038/s41586-023-06356-2"
+
+  - editor_id: SpuFz1_V4
+    cargo_capacity_bp: 1000
+    source: "Same scaffold as SpuFz1"
+    primary_doi: "10.1016/j.molcel.2025.10.015"
+
+  - editor_id: NlovFz2
+    cargo_capacity_bp: 1000
+    source: "Wei 2025; similar to SpuFz1"
+    primary_doi: "10.1038/s41589-025-02234-9"
+
+  - editor_id: enNlovFz2
+    cargo_capacity_bp: 1000
+    source: "Wei 2025; engineered variant; same mechanism as NlovFz2"
+    primary_doi: "10.1038/s41589-025-02234-9"
+
+  - editor_id: evoCAST
+    cargo_capacity_bp: 50000
+    source: "Witte 2025; CAST systems demonstrated 10-50 kb integration"
+    primary_doi: "10.1126/science.adt5199"
+
+  - editor_id: CAST_VK
+    cargo_capacity_bp: 10000
+    source: "Strecker 2019; Type V-K CAST demonstrated ~10 kb"
+    primary_doi: "10.1126/science.aax9181"
+
+  - editor_id: IS621
+    cargo_capacity_bp: 1000000
+    source: "Perry 2025; megabase-scale integration demonstrated"
+    primary_doi: "10.1038/s41586-025-07452-3"
+
+  - editor_id: Cre
+    cargo_capacity_bp: 10000
+    source: "10+ kb demonstrated in many studies; requires loxP sites"
+    primary_doi: "10.1016/0022-2836(81)90292-9"
+
+  - editor_id: Bxb1
+    cargo_capacity_bp: 50000
+    source: "Hartenian 2025 review; >50 kb demonstrated"
+    primary_doi: "10.1128/JB.185.21.6361-6368.2003"
+
+  - editor_id: Lambda_Int
+    cargo_capacity_bp: 50000
+    source: "Attsite recombination; >40 kb typical"
+    primary_doi: "10.1146/annurev.bi.58.070189.002235"
+
+  - editor_id: phiC31
+    cargo_capacity_bp: 100000
+    source: "Large inserts demonstrated in therapeutic contexts"
+    primary_doi: "10.1073/pnas.95.10.5505"
+
+  - editor_id: eePASSIGE
+    cargo_capacity_bp: 100000
+    source: "Pandey 2025; >100 kb integration"
+    primary_doi: "10.1038/s41551-024-01234-9"
+
+  - editor_id: Tn5
+    cargo_capacity_bp: 50000
+    source: "Cut-and-paste; large cargo in prokaryotic contexts"
+    primary_doi: "10.1146/annurev.genet.42.110807.091656"
+
+  - editor_id: SleepingBeauty
+    cargo_capacity_bp: 8000
+    source: "Practical limit ~8 kb; clinical vectors"
+    primary_doi: "10.1016/S0092-8674(00)80348-7"
+
+  - editor_id: PiggyBac
+    cargo_capacity_bp: 10000
+    source: "Demonstrated up to 100 kb but efficiency drops >10 kb"
+    primary_doi: "10.1016/0042-6822(89)90191-X"
+
+  - editor_id: PE2
+    cargo_capacity_bp: 200
+    source: "Anzalone 2019; pegRNA template limit"
+    primary_doi: "10.1038/s41586-019-1711-4"
+
+  - editor_id: PE5max
+    cargo_capacity_bp: 500
+    source: "Doman 2025; improved RT efficiency"
+    primary_doi: "10.1038/s41587-025-02267-9"
+
+  - editor_id: TwinPE
+    cargo_capacity_bp: 5000
+    source: "Anzalone 2022; larger replacements demonstrated"
+    primary_doi: "10.1038/s41587-021-01133-w"
+
+  - editor_id: ABE7_10
+    cargo_capacity_bp: 1
+    source: "Single base conversion; no insertion"
+    primary_doi: "10.1038/nature24644"
+
+  - editor_id: BE3
+    cargo_capacity_bp: 1
+    source: "Single base conversion; no insertion"
+    primary_doi: "10.1038/nature17946"
+
+  - editor_id: IscB
+    cargo_capacity_bp: 200
+    source: "Altae-Tran 2021; compact guide + limited HDR cargo"
+    primary_doi: "10.1126/science.abj0616"
+
+  - editor_id: MmeFz2
+    cargo_capacity_bp: 1000
+    source: "Saito 2023; similar to SpuFz1"
+    primary_doi: "10.1038/s41586-023-06356-2"
+
+  - editor_id: CAST_IF
+    cargo_capacity_bp: 10000
+    source: "Klompe 2019; Type I-F CAST"
+    primary_doi: "10.1038/s41586-019-1323-z"
