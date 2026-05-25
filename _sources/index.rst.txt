@@ -1,0 +1,25 @@
+pen-score
+=========
+
+**A multi-axis framework for ranking programmable genome editors by therapeutic potential.**
+
+Part of `PEN-STACK <https://github.com/ahmedanees-m>`_ — unified computational infrastructure
+for non-destructive genome engineering.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   quickstart
+   api
+
+**Useful links:** `GitHub <https://github.com/ahmedanees-m/pen-score>`_ ·
+`Interactive Scorecard Browser <scorecards/index.html>`_ ·
+`Changelog <https://github.com/ahmedanees-m/pen-score/blob/main/CHANGELOG.md>`_
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
