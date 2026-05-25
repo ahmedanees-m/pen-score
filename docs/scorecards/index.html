@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEN-SCORE Public Scorecard Browser</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d26; --border: #2d3148;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #6366f1;
+  --green: #22c55e; --yellow: #eab308; --red: #ef4444; --orange: #f97316;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: system-ui,-apple-system,sans-serif; font-size: 13px; }
+header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+header p { color: var(--muted); font-size: 12px; margin-top: 2px; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 12px 24px; background: var(--bg); border-bottom: 1px solid var(--border); }
+select, input { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 12px; outline: none; }
+select:focus, input:focus { border-color: var(--accent); }
+select { min-width: 240px; }
+input { min-width: 200px; }
+label { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.ctrl-group { display: flex; flex-direction: column; gap: 3px; }
+.badge { display: inline-block; padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 600; letter-spacing: .03em; }
+.badge-dsb-free { background: #14532d; color: #86efac; }
+.badge-nuclease  { background: #450a0a; color: #fca5a5; }
+.badge-transposase { background: #1e1b4b; color: #a5b4fc; }
+.stat-bar { display: flex; gap: 16px; padding: 10px 24px; background: var(--surface); border-bottom: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+.stat-bar span { color: #fff; font-weight: 700; }
+.weights-row { display: flex; gap: 8px; padding: 8px 24px; background: #111318; border-bottom: 1px solid var(--border); font-size: 10px; color: var(--muted); align-items: center; flex-wrap: wrap; }
+.w-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; color: var(--text); }
+.w-pill span { color: var(--accent); font-weight: 700; }
+.table-wrap { overflow-x: auto; padding: 16px 24px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 7px 10px; background: var(--surface); border-bottom: 2px solid var(--border); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; white-space: nowrap; user-select: none; }
+th:hover { color: var(--text); }
+th .sort-icon { margin-left: 4px; opacity: .4; }
+th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; }
+tr:hover td { background: #1a1d26; }
+.rank-cell { color: var(--muted); font-size: 11px; text-align: center; min-width: 36px; }
+.editor-name { font-weight: 600; color: #fff; }
+.organism { color: var(--muted); font-size: 11px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+.ref-cell { color: var(--muted); font-size: 10px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.score-cell { text-align: right; min-width: 56px; font-variant-numeric: tabular-nums; }
+.pen-score { font-size: 14px; font-weight: 700; }
+.na { color: #374151; font-style: italic; }
+.provisional { font-size: 9px; color: var(--orange); }
+footer { padding: 16px 24px; color: var(--muted); font-size: 11px; border-top: 1px solid var(--border); text-align: center; }
+.axis-label { writing-mode: vertical-rl; transform: rotate(180deg); max-height: 80px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>PEN-SCORE Public Scorecard Browser</h1>
+    <p>pen-score v0.1.3 &nbsp;|&nbsp; 28 editors &nbsp;|&nbsp; 7 axes &nbsp;|&nbsp; IS621 #1 &nbsp;|&nbsp;
+       Pre-registration: <code>pre-registration-v1.0.2</code></p>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <label for="useCase">Use-case profile</label>
+    <select id="useCase"></select>
+  </div>
+  <div class="ctrl-group">
+    <label for="search">Search editor / organism / mechanism</label>
+    <input id="search" type="text" placeholder="e.g. IS621, CRISPR, DSB_FREE…">
+  </div>
+  <div class="ctrl-group">
+    <label for="filter">Filter</label>
+    <select id="filter">
+      <option value="all">All editors</option>
+      <option value="DSB_FREE">DSB-free only</option>
+      <option value="DSB_NUCLEASE">Nucleases only</option>
+      <option value="TRANSPOSASE">Transposases only</option>
+    </select>
+  </div>
+</div>
+
+<div class="weights-row" id="weightsRow">Weights: loading…</div>
+
+<div class="stat-bar">
+  <div>Showing <span id="statShowing">28</span> of 28 editors</div>
+  <div>Top editor: <span id="statTop">IS621</span> &nbsp;PenScore <span id="statScore">0.9290</span></div>
+  <div>IS621 #1 across all DSB-free profiles: <span id="statIS621">yes</span></div>
+</div>
+
+<div class="table-wrap">
+<table id="scoreTable">
+<thead>
+<tr>
+  <th data-col="rank" class="sorted">Rank <span class="sort-icon">▲</span></th>
+  <th data-col="editor_id">Editor <span class="sort-icon">↕</span></th>
+  <th data-col="organism">Organism <span class="sort-icon">↕</span></th>
+  <th data-col="mechanism_bucket">Class <span class="sort-icon">↕</span></th>
+  <th data-col="year_discovered">Year <span class="sort-icon">↕</span></th>
+  <th data-col="PenScore">PenScore <span class="sort-icon">↕</span></th>
+  <th data-col="S_DSB">DSB <span class="sort-icon">↕</span></th>
+  <th data-col="S_Spec">Spec <span class="sort-icon">↕</span></th>
+  <th data-col="S_Cargo">Cargo <span class="sort-icon">↕</span></th>
+  <th data-col="S_Deliv">Deliv <span class="sort-icon">↕</span></th>
+  <th data-col="S_Immuno">Immuno <span class="sort-icon">↕</span></th>
+  <th data-col="S_Prog">Prog <span class="sort-icon">↕</span></th>
+  <th data-col="S_Mature">Mature <span class="sort-icon">↕</span></th>
+  <th data-col="n_axes">Axes <span class="sort-icon">↕</span></th>
+  <th data-col="primary_reference">Reference</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+
+<footer>
+  PEN-SCORE v0.1.3  - 
+  Pre-registration locked 2026-05-13T17:56:38Z (pre-registration-v1.0.2)  - 
+  mech-class v0.5.1  -  All scores on [0,1]; missing axes excluded from weighted average  - 
+  Source: <a href="https://github.com/ahmedanees-m/pen-score" style="color:var(--accent)">github.com/ahmedanees-m/pen-score</a>
+</footer>
+
+<script>
+const EDITORS = [{"editor_id": "SpCas9", "canonical_accession": "Q99ZW2", "organism": "Streptococcus pyogenes", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2012, "primary_reference": "Jinek et al. 2012 Science", "PenScore": 0.3676, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.5, "S_Deliv": 0.0879, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 1.0}, {"editor_id": "Cas12a", "canonical_accession": "U2UMQ6", "organism": "Acidaminococcus sp. BV3L6", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2015, "primary_reference": "Zetsche et al. 2015 Cell", "PenScore": 0.359, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.5, "S_Deliv": 0.1156, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 0.7167}, {"editor_id": "Cas12f", "canonical_accession": "A0A482D308", "organism": "Uncultured archaeon", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2021, "primary_reference": "Kim et al. 2022 Nat Biotechnol", "PenScore": 0.5667, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 0.9999, "S_Cargo": 0.5, "S_Deliv": 0.8647, "S_Immuno": 0.7495, "S_Prog": 1.0, "S_Mature": 0.3762}, {"editor_id": "SpuFz1", "canonical_accession": "A0A0L0H5U9", "organism": "Spizellomyces punctatus", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2023, "primary_reference": "Saito et al. 2023 Nature", "PenScore": 0.5673, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 0.9999, "S_Cargo": 0.5, "S_Deliv": 0.7875, "S_Immuno": 0.6114, "S_Prog": 1.0, "S_Mature": 0.9744}, {"editor_id": "SpuFz1_V4", "canonical_accession": "A0A0L0H5U9", "organism": "Spizellomyces punctatus", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2025, "primary_reference": "Zhao et al. 2025 Mol Cell", "PenScore": 0.5242, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.5, "S_Deliv": 0.7875, "S_Immuno": 0.6114, "S_Prog": 1.0, "S_Mature": 0.112}, {"editor_id": "NlovFz2", "canonical_accession": "REQUIRES_STEP7", "organism": "Naegleria lovaniensis", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2025, "primary_reference": "Wei et al. 2025 Nat Chem Biol", "PenScore": 0.2829, "n_axes": 4, "S_DSB": 0.0, "S_Spec": null, "S_Cargo": 0.5, "S_Deliv": null, "S_Immuno": null, "S_Prog": 1.0, "S_Mature": 0.112}, {"editor_id": "enNlovFz2", "canonical_accession": "REQUIRES_STEP7", "organism": "Naegleria lovaniensis", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2025, "primary_reference": "Wei et al. 2025 Nat Chem Biol", "PenScore": 0.2792, "n_axes": 4, "S_DSB": 0.0, "S_Spec": null, "S_Cargo": 0.5, "S_Deliv": null, "S_Immuno": null, "S_Prog": 1.0, "S_Mature": 0.0707}, {"editor_id": "evoCAST", "canonical_accession": "REQUIRES_STEP7", "organism": "Pseudoalteromonas sp. S983", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2025, "primary_reference": "Witte et al. 2025 Science", "PenScore": 0.8744, "n_axes": 5, "S_DSB": 0.9, "S_Spec": 1.0, "S_Cargo": 0.7832, "S_Deliv": null, "S_Immuno": null, "S_Prog": 1.0, "S_Mature": 0.6085}, {"editor_id": "CAST_VK", "canonical_accession": "A0A8M0FGU0", "organism": "Scytonema hofmannii", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2019, "primary_reference": "Strecker et al. 2019 Science", "PenScore": 0.7835, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 1.0, "S_Cargo": 0.6667, "S_Deliv": 0.7867, "S_Immuno": 0.6075, "S_Prog": 1.0, "S_Mature": 0.1414}, {"editor_id": "IS621", "canonical_accession": "A0A2X3M8B0", "organism": "Escherichia coli", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2024, "primary_reference": "Durrant et al. 2024 Nature", "PenScore": 0.929, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 1.0, "S_Cargo": 1.0, "S_Deliv": 0.9421, "S_Immuno": 0.7594, "S_Prog": 1.0, "S_Mature": 0.7921}, {"editor_id": "Cre", "canonical_accession": "P06956", "organism": "Escherichia phage P1", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 1981, "primary_reference": "Sternberg & Hamilton 1981 J Mol Biol", "PenScore": 0.7978, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.8866, "S_Cargo": 0.6667, "S_Deliv": 0.9419, "S_Immuno": 0.8067, "S_Prog": 0.0, "S_Mature": 0.7485}, {"editor_id": "Bxb1", "canonical_accession": "Q9B086", "organism": "Mycobacterium phage Bxb1", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2003, "primary_reference": "Ghosh, Kim & Hatfull 2003 Mol Cell", "PenScore": 0.7881, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.9999, "S_Cargo": 0.7832, "S_Deliv": 0.8808, "S_Immuno": 0.641, "S_Prog": 0.0, "S_Mature": 0.3241}, {"editor_id": "Lambda_Int", "canonical_accession": "P03700", "organism": "Escherichia phage lambda", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 1976, "primary_reference": "Landy 1989 Annu Rev Biochem", "PenScore": 0.8231, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.988, "S_Cargo": 0.7832, "S_Deliv": 0.9382, "S_Immuno": 0.7495, "S_Prog": 0.0, "S_Mature": 0.6141}, {"editor_id": "phiC31", "canonical_accession": "Q9T221", "organism": "Streptomyces phage phiC31", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 1998, "primary_reference": "Thorpe & Smith 1998 PNAS", "PenScore": 0.7853, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.9995, "S_Cargo": 0.8333, "S_Deliv": 0.8138, "S_Immuno": 0.5819, "S_Prog": 0.0, "S_Mature": 0.4555}, {"editor_id": "eePASSIGE", "canonical_accession": "Q9B086", "organism": "Mycobacterium phage Bxb1 (evolved)", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2024, "primary_reference": "Pandey et al. 2025 Nat Biomed Eng", "PenScore": 0.7819, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.9999, "S_Cargo": 0.8333, "S_Deliv": 0.8808, "S_Immuno": 0.641, "S_Prog": 0.0, "S_Mature": 0.0}, {"editor_id": "Tn5", "canonical_accession": "Q46731", "organism": "Escherichia coli", "mechanism_bucket": "TRANSPOSASE", "year_discovered": 1995, "primary_reference": "Reznikoff 2008 Annu Rev Genet", "PenScore": 0.5728, "n_axes": 7, "S_DSB": 0.5, "S_Spec": 0.1252, "S_Cargo": 0.7832, "S_Deliv": 0.8928, "S_Immuno": 0.7022, "S_Prog": 0.0, "S_Mature": 0.4717}, {"editor_id": "SleepingBeauty", "canonical_accession": "NO_UNIPROT", "organism": "Salmo salar (reconstructed Tc1-like)", "mechanism_bucket": "TRANSPOSASE", "year_discovered": 1997, "primary_reference": "Ivics et al. 1997 Cell", "PenScore": 0.5302, "n_axes": 6, "S_DSB": 0.5, "S_Spec": 0.019, "S_Cargo": 0.6505, "S_Deliv": 0.9427, "S_Immuno": null, "S_Prog": 0.0, "S_Mature": 0.6141}, {"editor_id": "PiggyBac", "canonical_accession": "Q283G1", "organism": "Trichoplusia ni", "mechanism_bucket": "TRANSPOSASE", "year_discovered": 1989, "primary_reference": "Cary et al. 1989 Virology", "PenScore": 0.5552, "n_axes": 7, "S_DSB": 0.5, "S_Spec": 0.2284, "S_Cargo": 0.6667, "S_Deliv": 0.822, "S_Immuno": 0.6903, "S_Prog": 0.0, "S_Mature": 0.5834}, {"editor_id": "PE2", "canonical_accession": "Q99ZW2", "organism": "Streptococcus pyogenes (fusion)", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2019, "primary_reference": "Anzalone et al. 2019 Nature", "PenScore": 0.3299, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.3835, "S_Deliv": 0.0879, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 0.7129}, {"editor_id": "PE5max", "canonical_accession": "Q99ZW2", "organism": "Streptococcus pyogenes (fusion)", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2021, "primary_reference": "Chen et al. 2021 Cell", "PenScore": 0.338, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.4498, "S_Deliv": 0.0879, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 0.6085}, {"editor_id": "TwinPE", "canonical_accession": "Q99ZW2", "organism": "Streptococcus pyogenes (fusion)", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2022, "primary_reference": "Anzalone et al. 2022 Nat Biotechnol", "PenScore": 0.3579, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.6165, "S_Deliv": 0.0879, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 0.3399}, {"editor_id": "ABE7_10", "canonical_accession": "Q99ZW2", "organism": "Streptococcus pyogenes (fusion)", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2017, "primary_reference": "Gaudelli et al. 2017 Nature", "PenScore": 0.2659, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.0, "S_Deliv": 0.0879, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 0.9656}, {"editor_id": "BE3", "canonical_accession": "Q99ZW2", "organism": "Streptococcus pyogenes (fusion)", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2016, "primary_reference": "Komor et al. 2016 Nature", "PenScore": 0.2419, "n_axes": 7, "S_DSB": 0.0, "S_Spec": 1.0, "S_Cargo": 0.0, "S_Deliv": 0.0879, "S_Immuno": 0.0, "S_Prog": 1.0, "S_Mature": 0.4857}, {"editor_id": "IscB", "canonical_accession": "K9VH02", "organism": "Oscillatoria nigro-viridis PCC 7112", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2021, "primary_reference": "Altae-Tran et al. 2021 Science", "PenScore": 0.7837, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 1.0, "S_Cargo": 0.3835, "S_Deliv": 0.9241, "S_Immuno": 0.7653, "S_Prog": 1.0, "S_Mature": 0.4124}, {"editor_id": "MmeFz2", "canonical_accession": "REQUIRES_STEP7", "organism": "Mercenaria mercenaria", "mechanism_bucket": "DSB_NUCLEASE", "year_discovered": 2023, "primary_reference": "Saito et al. 2023 Nature", "PenScore": 0.2856, "n_axes": 4, "S_DSB": 0.0, "S_Spec": null, "S_Cargo": 0.5, "S_Deliv": null, "S_Immuno": null, "S_Prog": 1.0, "S_Mature": 0.1414}, {"editor_id": "CAST_IF", "canonical_accession": "A0A0F4L2U9", "organism": "Vibrio cholerae O1 biovar El Tor", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2017, "primary_reference": "Klompe et al. 2019 Nature", "PenScore": 0.7997, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.9999, "S_Cargo": 0.6667, "S_Deliv": 0.8629, "S_Immuno": 0.6884, "S_Prog": 1.0, "S_Mature": 0.0}, {"editor_id": "eePASSIGE_v2", "canonical_accession": "Q9B086", "organism": "Mycobacterium phage Bxb1 (evolved)", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2024, "primary_reference": "Pandey et al. 2025 Nat Biomed Eng", "PenScore": 0.7975, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 0.9999, "S_Cargo": 0.8835, "S_Deliv": 0.8808, "S_Immuno": 0.641, "S_Prog": 0.0, "S_Mature": 0.112}, {"editor_id": "IS621_2", "canonical_accession": "A0A2X3M8B0", "organism": "Escherichia coli", "mechanism_bucket": "DSB_FREE_TRANSEST_RECOMBINASE", "year_discovered": 2024, "primary_reference": "Hiraizumi et al. 2024 Nature", "PenScore": 0.9, "n_axes": 7, "S_DSB": 0.9, "S_Spec": 1.0, "S_Cargo": 1.0, "S_Deliv": 0.9421, "S_Immuno": 0.7594, "S_Prog": 1.0, "S_Mature": 0.2121}];
+const USE_CASES = {"human_therapeutic_aav_insertion": {"label": "Human Therapeutic \u2014 AAV Insertion", "weights": {"S_DSB": 0.25, "S_Spec": 0.15, "S_Cargo": 0.2, "S_Deliv": 0.2, "S_Immuno": 0.1, "S_Prog": 0.05, "S_Mature": 0.05}}, "human_therapeutic_electroporation": {"label": "Human Therapeutic \u2014 Electroporation", "weights": {"S_DSB": 0.25, "S_Spec": 0.25, "S_Cargo": 0.2, "S_Deliv": 0.05, "S_Immuno": 0.1, "S_Prog": 0.05, "S_Mature": 0.1}}, "large_cargo_integration": {"label": "Large Cargo Integration", "weights": {"S_DSB": 0.2, "S_Spec": 0.1, "S_Cargo": 0.4, "S_Deliv": 0.1, "S_Immuno": 0.05, "S_Prog": 0.1, "S_Mature": 0.05}}, "base_editing_small_correction": {"label": "Base Editing / Small Correction", "weights": {"S_DSB": 0.15, "S_Spec": 0.4, "S_Cargo": 0.05, "S_Deliv": 0.15, "S_Immuno": 0.15, "S_Prog": 0.05, "S_Mature": 0.05}}, "research_discovery": {"label": "Research / Discovery", "weights": {"S_DSB": 0.15, "S_Spec": 0.15, "S_Cargo": 0.15, "S_Deliv": 0.1, "S_Immuno": 0.05, "S_Prog": 0.3, "S_Mature": 0.1}}};
+const AXES = ["S_DSB","S_Spec","S_Cargo","S_Deliv","S_Immuno","S_Prog","S_Mature"];
+const SENTINEL_IDS = ["evoCAST","NlovFz2","enNlovFz2","MmeFz2","SleepingBeauty"];
+
+let currentUseCase = "human_therapeutic_aav_insertion";
+let sortCol = "rank";
+let sortAsc = true;
+let searchTerm = "";
+let filterMech = "all";
+
+function penscore(ed, weights) {
+  let num = 0, den = 0;
+  for (const ax of AXES) {
+    const v = ed[ax];
+    if (v !== null && v !== undefined && !isNaN(v)) {
+      const w = weights[ax] || 0;
+      num += w * v; den += w;
+    }
+  }
+  return den > 0 ? Math.round(num / den * 10000) / 10000 : null;
+}
+
+function scoreColor(v) {
+  if (v === null || v === undefined) return "";
+  if (v >= 0.75) return `hsl(${140 * v},70%,38%)`;
+  if (v >= 0.40) return `hsl(${40},80%,30%)`;
+  return `hsl(${0},60%,30%)`;
+}
+
+function fmtScore(v, big) {
+  if (v === null || v === undefined) return `<span class="na">-</span>`;
+  const cls = big ? "pen-score" : "";
+  const bg = scoreColor(v);
+  const style = bg ? `style="background:${bg};padding:2px 5px;border-radius:4px;"` : "";
+  return `<span class="${cls}" ${style}>${v.toFixed(4)}</span>`;
+}
+
+function mechBadge(bucket) {
+  if (!bucket) return "";
+  if (bucket.includes("DSB_FREE")) return `<span class="badge badge-dsb-free">DSB-free</span>`;
+  if (bucket.includes("TRANSPOSASE")) return `<span class="badge badge-transposase">Transposase</span>`;
+  return `<span class="badge badge-nuclease">Nuclease</span>`;
+}
+
+function computeRanked() {
+  const weights = USE_CASES[currentUseCase].weights;
+  let rows = EDITORS.map(ed => ({
+    ...ed,
+    PenScore: penscore(ed, weights)
+  }));
+  rows.sort((a,b) => (b.PenScore || 0) - (a.PenScore || 0));
+  rows.forEach((r,i) => r.rank = i+1);
+  return rows;
+}
+
+function render() {
+  const weights = USE_CASES[currentUseCase].weights;
+  // weights bar
+  document.getElementById("weightsRow").innerHTML =
+    "Weights: " + AXES.map(a =>
+      `<span class="w-pill">${a.replace("S_","")}: <span>${weights[a].toFixed(2)}</span></span>`
+    ).join(" ");
+
+  let rows = computeRanked();
+
+  // filter by mechanism
+  if (filterMech !== "all") {
+    rows = rows.filter(r => r.mechanism_bucket && r.mechanism_bucket.includes(filterMech));
+  }
+
+  // filter by search
+  if (searchTerm) {
+    const q = searchTerm.toLowerCase();
+    rows = rows.filter(r =>
+      (r.editor_id||"").toLowerCase().includes(q) ||
+      (r.organism||"").toLowerCase().includes(q) ||
+      (r.mechanism_bucket||"").toLowerCase().includes(q) ||
+      (r.canonical_accession||"").toLowerCase().includes(q)
+    );
+  }
+
+  // sort
+  if (sortCol !== "rank") {
+    rows.sort((a,b) => {
+      let av = a[sortCol], bv = b[sortCol];
+      if (av === null || av === undefined) av = sortAsc ? Infinity : -Infinity;
+      if (bv === null || bv === undefined) bv = sortAsc ? Infinity : -Infinity;
+      if (typeof av === "string") return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+      return sortAsc ? av - bv : bv - av;
+    });
+  } else if (!sortAsc) {
+    rows.reverse();
+  }
+
+  // update stats
+  document.getElementById("statShowing").textContent = rows.length;
+  if (rows.length > 0) {
+    const top = rows[0];
+    document.getElementById("statTop").textContent = top.editor_id;
+    document.getElementById("statScore").textContent = top.PenScore ? top.PenScore.toFixed(4) : "N/A";
+  }
+  // IS621 #1 check across DSB-free profiles
+  const dsbFreeProfiles = ["human_therapeutic_aav_insertion","large_cargo_integration"];
+  const is621Top = dsbFreeProfiles.every(uc => {
+    const w = USE_CASES[uc].weights;
+    const ranked = EDITORS.map(e => ({id:e.editor_id, ps:penscore(e,w)}))
+                          .sort((a,b)=>(b.ps||0)-(a.ps||0));
+    return ranked[0] && ranked[0].id === "IS621";
+  });
+  document.getElementById("statIS621").textContent = is621Top ? "confirmed" : "see table";
+
+  // tbody
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = rows.map(row => {
+    const isProvisional = SENTINEL_IDS.includes(row.editor_id);
+    return `<tr>
+      <td class="rank-cell">${row.rank}</td>
+      <td><div class="editor-name">${row.editor_id}${isProvisional ? ' <span class="provisional">provisional</span>' : ''}</div></td>
+      <td><div class="organism" title="${row.organism||''}">${row.organism||'-'}</div></td>
+      <td>${mechBadge(row.mechanism_bucket)}</td>
+      <td>${row.year_discovered||'-'}</td>
+      <td class="score-cell">${fmtScore(row.PenScore, true)}</td>
+      ${AXES.map(ax => `<td class="score-cell">${fmtScore(row[ax])}</td>`).join("")}
+      <td style="text-align:center">${row.n_axes}/7</td>
+      <td class="ref-cell" title="${row.primary_reference||''}">${row.primary_reference||'-'}</td>
+    </tr>`;
+  }).join("");
+
+  // update sort icons
+  document.querySelectorAll("th").forEach(th => {
+    const col = th.dataset.col;
+    const icon = th.querySelector(".sort-icon");
+    if (!icon) return;
+    th.classList.toggle("sorted", col === sortCol);
+    if (col === sortCol) icon.textContent = sortAsc ? "▲" : "▼";
+    else icon.textContent = "↕";
+  });
+}
+
+// Populate use-case selector
+const sel = document.getElementById("useCase");
+Object.entries(USE_CASES).forEach(([k,v]) => {
+  const opt = document.createElement("option");
+  opt.value = k; opt.textContent = v.label;
+  if (k === currentUseCase) opt.selected = true;
+  sel.appendChild(opt);
+});
+
+sel.addEventListener("change", e => { currentUseCase = e.target.value; render(); });
+document.getElementById("search").addEventListener("input", e => { searchTerm = e.target.value; render(); });
+document.getElementById("filter").addEventListener("change", e => { filterMech = e.target.value; render(); });
+
+document.querySelectorAll("th[data-col]").forEach(th => {
+  th.addEventListener("click", () => {
+    const col = th.dataset.col;
+    if (sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = col === "rank"; }
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
