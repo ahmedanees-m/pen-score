@@ -60,7 +60,7 @@ Biophysical-only score (exclude S_Mature for fair comparison of new editors):
         exclude_axes=["S_Mature"],
     )
     print(result.pen_score)       # >0.93 biophysical PenScore
-    print(result.axes.S_Mature)   # 0.0 — still in axes output, just not in composite
+    print(result.axes.S_Mature)   # 0.0 - still in axes output, just not in composite
 
 CLI
 ---

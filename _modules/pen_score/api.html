@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>pen_score.api - pen-score 0.1.4.dev3+g0c00a477f</title>
+        <title>pen_score.api - pen-score 0.1.3</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">pen-score 0.1.4.dev3+g0c00a477f</div></a>
+      <a href="../../index.html"><div class="brand">pen-score 0.1.3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">pen-score 0.1.4.dev3+g0c00a477f</span>
+  <span class="sidebar-brand-text">pen-score 0.1.3</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -230,10 +230,10 @@
 
 <span class="sd">v0.1.3 additions</span>
 <span class="sd">----------------</span>
-<span class="sd">* :func:`get_editor_metadata` — return PEN-COMPARE v3.2-compatible metadata for a</span>
-<span class="sd">  single editor by ID or alias.  Resolves deprecated aliases (e.g. &quot;IS622&quot; →</span>
+<span class="sd">* :func:`get_editor_metadata` - return PEN-COMPARE v3.2-compatible metadata for a</span>
+<span class="sd">  single editor by ID or alias.  Resolves deprecated aliases (e.g. &quot;IS622&quot; -&gt;</span>
 <span class="sd">  &quot;ISCro4&quot;) with a :class:`DeprecationWarning`.</span>
-<span class="sd">* :class:`EditorMetadata` — frozen dataclass for the returned record.</span>
+<span class="sd">* :class:`EditorMetadata` - frozen dataclass for the returned record.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -255,7 +255,7 @@
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># EditorMetadata — v0.1.3 / PEN-COMPARE v3.2 metadata API</span>
+<span class="c1"># EditorMetadata - v0.1.3 / PEN-COMPARE v3.2 metadata API</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
 
@@ -668,7 +668,7 @@
         <span class="n">missing</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">:</span>
-                <span class="k">continue</span>  <span class="c1"># explicitly excluded — skip without recording as missing</span>
+                <span class="k">continue</span>  <span class="c1"># explicitly excluded - skip without recording as missing</span>
             <span class="n">val</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
@@ -712,7 +712,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a42bc514"></script>
+</div><script src="../../_static/documentation_options.js?v=360bc84d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

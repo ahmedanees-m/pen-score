@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Quick Start" href="quickstart.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>API Reference - pen-score 0.1.4.dev3+g0c00a477f</title>
+        <title>API Reference - pen-score 0.1.3</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">pen-score 0.1.4.dev3+g0c00a477f</div></a>
+      <a href="index.html"><div class="brand">pen-score 0.1.3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">pen-score 0.1.4.dev3+g0c00a477f</span>
+  <span class="sidebar-brand-text">pen-score 0.1.3</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -244,10 +244,10 @@
 <section id="v0-1-3-additions">
 <h3>v0.1.3 additions<a class="headerlink" href="#v0-1-3-additions" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference internal" href="#pen_score.api.get_editor_metadata" title="pen_score.api.get_editor_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_editor_metadata()</span></code></a> — return PEN-COMPARE v3.2-compatible metadata for a
-single editor by ID or alias.  Resolves deprecated aliases (e.g. “IS622” →
+<li><p><a class="reference internal" href="#pen_score.api.get_editor_metadata" title="pen_score.api.get_editor_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_editor_metadata()</span></code></a> - return PEN-COMPARE v3.2-compatible metadata for a
+single editor by ID or alias.  Resolves deprecated aliases (e.g. “IS622” -&gt;
 “ISCro4”) with a <code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>.</p></li>
-<li><p><a class="reference internal" href="#pen_score.api.EditorMetadata" title="pen_score.api.EditorMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">EditorMetadata</span></code></a> — frozen dataclass for the returned record.</p></li>
+<li><p><a class="reference internal" href="#pen_score.api.EditorMetadata" title="pen_score.api.EditorMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">EditorMetadata</span></code></a> - frozen dataclass for the returned record.</p></li>
 </ul>
 </section>
 <dl class="py class">
@@ -659,7 +659,7 @@ w_Energy = 0.05</p>
 </dl>
 <p>All weights sum to 1.0 over the 8 axes.  When an axis is None, the weight
 is redistributed proportionally across the available axes.
-S_Energy added in v0.1.1; weights were rescaled from v0.1.0 × 0.95.</p>
+S_Energy added in v0.1.1; weights were rescaled from v0.1.0 x 0.95.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pen_score.scorer.composite.compute_pen_score">
 <span class="sig-prename descclassname"><span class="pre">pen_score.scorer.composite.</span></span><span class="sig-name descname"><span class="pre">compute_pen_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pen_score/scorer/composite.html#compute_pen_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pen_score.scorer.composite.compute_pen_score" title="Link to this definition">¶</a></dt>
@@ -692,14 +692,14 @@ Excluded axes are NOT reported in the missing list.</p></li>
 <span id="pen-score-scorer-bootstrap"></span><h2>pen_score.scorer.bootstrap<a class="headerlink" href="#module-pen_score.scorer.bootstrap" title="Link to this heading">¶</a></h2>
 <p>Bootstrap confidence intervals on scorecard rankings.</p>
 <dl class="simple">
-<dt>Same methodology as Papers 1-2:</dt><dd><p>1000× bootstrap resampling on the editor universe
+<dt>Same methodology as GENOME-ATLAS and MECH-CLASS:</dt><dd><p>1000x bootstrap resampling on the editor universe
 Seed = 42 (fixed across all PEN-STACK papers)
 Report 2.5th and 97.5th percentiles as the 95% CI</p>
 </dd>
 <dt>Applied to:</dt><dd><ul class="simple">
-<li><p>Individual axis scores (Step 19)</p></li>
-<li><p>PenScore rankings (Step 22)</p></li>
-<li><p>Pre-registered prediction tests (Steps 20-21)</p></li>
+<li><p>Individual axis scores</p></li>
+<li><p>PenScore rankings</p></li>
+<li><p>Pre-registered prediction tests</p></li>
 </ul>
 </dd>
 </dl>
@@ -875,7 +875,7 @@ Report 2.5th and 97.5th percentiles as the 95% CI</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=a42bc514"></script>
+</div><script src="_static/documentation_options.js?v=360bc84d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

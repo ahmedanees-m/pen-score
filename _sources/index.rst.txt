@@ -3,7 +3,7 @@ pen-score
 
 **A multi-axis framework for ranking programmable genome editors by therapeutic potential.**
 
-Part of `PEN-STACK <https://github.com/ahmedanees-m>`_ — unified computational infrastructure
+Part of `PEN-STACK <https://github.com/ahmedanees-m>`_ - unified computational infrastructure
 for non-destructive genome engineering.
 
 .. toctree::
