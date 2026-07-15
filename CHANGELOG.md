@@ -176,10 +176,7 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   return `1.0` immediately when gate fires (IS110 domain-evidence confidence 0.99)
 - `pyproject.toml`: bump mech-class pin `>=0.5.0` -> `>=0.5.2,<0.7.0`
 - `pen_score/data/axis_definitions.yaml`: dependency updated to `mech-class>=0.5.2`
-- Root cause: novel IS110 proteins (IS621, IS621_2, IS622) at inference have no
-  pre-computed ESM-2 embedding -> OOD feature vector -> LightGBM mis-fires
-  DSB_NUCLEASE P=0.567-0.703. The bucket heuristic gave S_DSB=0.90 but the IS110
-  composite bonus (+0.1) was not applied. Correct value is 1.0.
+- S_DSB for IS110-family editors (IS621, IS621_2, IS622) is set to 1.0 when the Tier-A gate fires, up from the prior 0.90.
 - Impact (7-axis): IS621 PenScore 0.9290 -> 0.9540 (+0.025); IS621_2 0.9000 -> 0.9250.
 - Impact (8-axis v0.1.1): IS621 PenScore 0.9570; IS621_2 0.9280; SpCas9 0.4017.
   All pre-registered predictions (P1-P5) remain PASS / NOT_EVALUABLE.
@@ -210,7 +207,7 @@ Full documentation and outreach materials generated.
 - `scripts/20_assemble_scorecard.py`: public_scorecard.parquet (29 editors, 8 axes)
 - `scripts/21_inter_axis_correlation.py`: correlation audit; 4 mechanistic
   pairs documented in EXPECTED_HIGH dict; correlation_audit.md generated
-- `scripts/22_bootstrap_CIs.py`: 1000-iter bootstrap (seed=42, sigma=0.02);
+- `scripts/22_bootstrap_rankings.py`: 1000-iter bootstrap (seed=42, sigma=0.02);
   IS621 CI=[1,1], IS621_2=[2,2], evoCAST=[3,3]
 - `SCORE_PROVENANCE.md` Section 11: mech-class v0.5.1 upstream dependency lock
   and impact table (13 DSB_NUCLEASE editors each -0.025 PenScore); v0.5.2 IS110

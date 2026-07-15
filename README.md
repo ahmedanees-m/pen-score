@@ -86,7 +86,7 @@ Editor accession (UniProt)
 
 ### Stage 3 - Compose a weighted PenScore
 
-The eight axis scores are combined into a single **PenScore** using a weighted average, where the weights come from a clinical use-case profile. Seven profiles are pre-registered - each assigns different importance to different axes depending on the therapeutic context.
+The eight axis scores are combined into a single **PenScore** using a weighted average, where the weights come from a clinical use-case profile. Seven use-case profiles are provided (five pre-registered; two added in v0.1.2), each assigning different importance to different axes depending on the therapeutic context.
 
 ```
 PenScore = Σ(weight_i x score_i) / Σ(weight_i for axes with data)
